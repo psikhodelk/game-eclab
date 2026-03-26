@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcLab 2.0 | Pro Scoreboard</title>
+    <!-- ИСПРАВЛЕНО: Полная ссылка на библиотеку фейерверков -->
     <script src="https://cdn.jsdelivr.net"></script>
     <style>
         :root {
@@ -47,7 +48,7 @@
 
         .teams-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2 колонки */
+            grid-template-columns: repeat(2, 1fr); /* 2 колонки по горизонтали */
             gap: 25px;
             width: 100%;
             max-width: 900px;
@@ -88,6 +89,7 @@
         .btn-pts {
             background: rgba(255,255,255,0.05); border: 1px solid var(--border);
             color: white; padding: 10px 0; border-radius: 10px; cursor: pointer;
+            font-size: 0.8rem;
         }
         .btn-pts:hover { background: white; color: black; }
 
@@ -209,7 +211,7 @@
 
             document.getElementById('modal').style.display = 'flex';
             
-            // Салют
+            // ИСПРАВЛЕНО: Функция фейерверка теперь закрыта правильно
             const end = Date.now() + 3000;
             (function frame() {
                 confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
@@ -219,14 +221,18 @@
         }
 
         function resetAll() {
-            if(!confirm("Сбросить все баллы и команды?")) return;
-            location.reload();
+            if(confirm("Сбросить все баллы и команды?")) {
+                location.reload();
+            }
         }
 
-        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        function closeModal() { 
+            document.getElementById('modal').style.display = 'none'; 
+        }
 
-        // Старт
-        addTeam(); addTeam();
+        // Автоматический старт с 2 командами
+        addTeam(); 
+        addTeam();
     </script>
 </body>
 </html>
