@@ -2,207 +2,245 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcLab 2.0 | Game Board</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>EcLab 2.0 | Своя Игра</title>
     <style>
         :root {
-            --bg: #020617;
-            --panel: #1e293b;
-            --accent: #22d3ee;
-            --gold: #facc15;
-            --glass: rgba(255, 255, 255, 0.05);
+            --si-blue: #003399;
+            --si-light-blue: #0055ff;
+            --si-gold: #ffcc00;
+            --si-border: #ffffff;
+            --bg: #000814;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Arial Black', sans-serif;
             background: var(--bg);
             color: white;
-            margin: 0; padding: 20px;
+            margin: 0; padding: 10px;
             display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; touch-action: none;
+            min-height: 100vh; overflow-x: hidden; touch-action: none;
         }
 
-        h1 { background: linear-gradient(90deg, #4ade80, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
+        /* Заголовок */
+        .header { text-align: center; margin-bottom: 15px; }
+        h1 { 
+            background: linear-gradient(90deg, #90ee90, #00ced1); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-size: 2.5rem; margin: 0; text-transform: uppercase;
+        }
+        .sub { color: #555; letter-spacing: 5px; font-size: 1rem; margin-top: -5px; }
 
-        /* Панель команд (Фишки) */
-        .teams-dock {
-            display: flex; gap: 15px; margin: 20px 0; padding: 20px;
-            background: var(--glass); border-radius: 50px; border: 1px solid rgba(255,255,255,0.1);
-            flex-wrap: wrap; justify-content: center;
+        /* Панель команд */
+        .dock {
+            display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+            padding: 15px; width: 100%; max-width: 1000px;
         }
 
         .team-chip {
-            background: var(--accent); color: #000;
-            padding: 10px 20px; border-radius: 30px;
-            cursor: grab; font-weight: 800; display: flex; align-items: center; gap: 10px;
-            box-shadow: 0 5px 15px rgba(34, 211, 238, 0.3);
-            user-select: none; transition: transform 0.2s;
-        }
-        .team-chip:active { cursor: grabbing; transform: scale(1.1); }
-        
-        .score-val { background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 10px; font-size: 0.9rem; }
-        .warn-btn { background: #000; color: var(--gold); border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; cursor: pointer; }
-
-        /* Игровое поле */
-        .game-board {
-            display: grid; grid-template-columns: 200px repeat(5, 1fr);
-            gap: 15px; width: 100%; max-width: 1100px; margin-top: 20px;
+            background: linear-gradient(to bottom, #444, #111);
+            border: 2px solid var(--si-border);
+            padding: 8px 15px; border-radius: 50px;
+            cursor: move; display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            z-index: 10; position: relative; touch-action: none;
         }
 
-        .category-name {
-            background: rgba(255,255,255,0.02); display: flex; align-items: center;
-            padding-left: 20px; font-weight: 700; color: #94a3b8; text-transform: uppercase;
-            border-radius: 15px; border-left: 4px solid var(--accent);
+        .team-name, .team-mems {
+            background: transparent; border: none; color: white;
+            font-family: inherit; font-size: 0.9rem; outline: none; width: 80px;
+        }
+        .team-mems { width: 30px; color: #4ade80; border-left: 1px solid #333; padding-left: 5px; }
+        .team-score { color: var(--si-gold); font-size: 1.1rem; min-width: 30px; text-align: center; }
+
+        /* Игровое табло */
+        .board {
+            display: grid; grid-template-columns: 150px repeat(5, 1fr);
+            gap: 5px; width: 100%; max-width: 1100px;
+            background: var(--si-border); border: 4px solid var(--si-border);
+            box-shadow: 0 0 50px rgba(0,51,153,0.5);
+        }
+
+        .cat {
+            background: var(--si-blue); color: white;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; font-size: 0.8rem; padding: 10px;
+            text-transform: uppercase; border: 1px solid var(--si-border);
         }
 
         .cell {
-            background: var(--panel); aspect-ratio: 16/9;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; font-weight: 900; color: var(--gold);
-            border-radius: 15px; border: 2px solid transparent;
-            transition: 0.3s; position: relative;
+            background: linear-gradient(135deg, var(--si-blue), var(--si-light-blue));
+            aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; color: var(--si-gold); border: 1px solid var(--si-border);
+            transition: 0.2s; position: relative;
         }
-        .cell.over { border-color: var(--accent); background: rgba(34, 211, 238, 0.1); }
-        .cell.used { opacity: 0.2; pointer-events: none; grayscale: 1; }
 
-        /* Управление */
-        .controls { margin-top: 40px; display: flex; gap: 20px; }
-        .btn { padding: 15px 40px; border-radius: 50px; border: none; font-weight: 800; cursor: pointer; text-transform: uppercase; }
-        .btn-res { background: var(--accent); color: #000; }
-        .btn-reset { background: transparent; color: #475569; border: 1px solid rgba(255,255,255,0.1); }
+        .cell.used { background: #001133; color: #002255; }
+        .cell.active { border: 3px solid var(--si-gold); transform: scale(0.98); }
+
+        /* Кнопки */
+        .btns { margin-top: 30px; display: flex; gap: 15px; }
+        .btn { 
+            padding: 12px 30px; border-radius: 5px; border: 2px solid white;
+            font-family: inherit; cursor: pointer; background: transparent; color: white;
+        }
+        .btn-res { background: var(--si-gold); color: black; border-color: var(--si-gold); }
 
         /* Конфети */
-        .dot { position: fixed; width: 8px; height: 8px; border-radius: 50%; pointer-events: none; animation: fall 1.5s forwards; }
-        @keyframes fall { 0% { transform: translate(0,0); opacity:1; } 100% { transform: translate(var(--x), var(--y)); opacity:0; } }
+        .part { position: fixed; width: 8px; height: 8px; border-radius: 50%; pointer-events: none; animation: p-fly 1.5s forwards; z-index: 2000; }
+        @keyframes p-fly { 0% { transform: translate(0,0); opacity:1; } 100% { transform: translate(var(--x), var(--y)); opacity:0; } }
 
-        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center; }
-        .m-box { background: #0f172a; padding: 40px; border-radius: 30px; text-align: center; width: 350px; }
+        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
+        .m-content { background: var(--si-blue); padding: 30px; border: 4px solid var(--si-gold); text-align: center; width: 320px; }
     </style>
 </head>
 <body>
 
-    <h1>EcLab 2.0</h1>
-    <div style="color: #64748b; margin-bottom: 10px;">Перетащите команду на баллы</div>
-
-    <div class="teams-dock" id="dock">
-        <!-- Команды появятся здесь -->
+    <div class="header">
+        <h1>EcLab 2.0</h1>
+        <div class="sub">Викторина</div>
     </div>
 
-    <div class="game-board" id="board">
-        <!-- Категории и ячейки -->
-    </div>
+    <div class="dock" id="dock"></div>
 
-    <div class="controls">
-        <button class="btn" style="background:#fff" onclick="addTeamPrompt()">+ Команда</button>
-        <button class="btn btn-res" onclick="showWinners()">ИТОГИ</button>
-        <button class="btn btn-reset" onclick="resetGame()">СБРОС</button>
+    <div class="board" id="board"></div>
+
+    <div class="btns">
+        <button class="btn" onclick="addT()">+ КОМАНДА</button>
+        <button class="btn btn-res" onclick="showWin()">ИТОГИ</button>
+        <button class="btn" onclick="resetG()">СБРОС</button>
     </div>
 
     <div id="modal">
-        <div class="m-box">
-            <h2>🏆 Победители</h2>
+        <div class="m-content">
+            <h2 style="color:var(--si-gold)">РЕЗУЛЬТАТЫ</h2>
             <div id="ranks"></div>
-            <button onclick="document.getElementById('modal').style.display='none'" style="margin-top:20px; background:none; border:none; color:#555; cursor:pointer">ЗАКРЫТЬ</button>
+            <button onclick="document.getElementById('modal').style.display='none'" style="margin-top:20px; color:white; background:none; border:1px solid white; padding:5px 15px;">OK</button>
         </div>
     </div>
 
     <script>
-        let teams = JSON.parse(localStorage.getItem('eclab_board')) || {};
-        const categories = ['История', 'География', 'Культура', 'Обо всем'];
-        const values = [10, 20, 30, 40, 50];
+        let teams = JSON.parse(localStorage.getItem('si_game')) || {};
+        const cats = ['История', 'География', 'Культура', 'Обо всем'];
+        const vals = [10, 20, 30, 40, 50];
 
         function init() {
-            // Рисуем поле
-            const board = document.getElementById('board');
-            categories.forEach(cat => {
-                const label = document.createElement('div');
-                label.className = 'category-name';
-                label.innerText = cat;
-                board.appendChild(label);
-
-                values.forEach(val => {
+            const b = document.getElementById('board');
+            b.innerHTML = '';
+            cats.forEach(cName => {
+                const cDiv = document.createElement('div');
+                cDiv.className = 'cat';
+                cDiv.innerText = cName;
+                b.appendChild(cDiv);
+                vals.forEach(v => {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
-                    cell.innerText = val;
-                    cell.dataset.value = val;
-                    cell.ondragover = e => { e.preventDefault(); cell.classList.add('over'); };
-                    cell.ondragleave = () => cell.classList.remove('over');
-                    cell.ondrop = e => handleDrop(e, cell);
-                    board.appendChild(cell);
+                    cell.innerText = v;
+                    cell.dataset.v = v;
+                    b.appendChild(cell);
                 });
             });
 
-            // Рисуем команды
-            if (Object.keys(teams).length === 0) {
-                ["Команда 1", "Команда 2"].forEach(n => createTeam(n));
-            } else {
-                Object.keys(teams).forEach(id => renderTeam(id));
-            }
-        }
-
-        function createTeam(name) {
-            const id = 't' + Date.now() + Math.random();
-            teams[id] = { name, score: 0, warns: 0 };
-            renderTeam(id);
-            save();
-        }
-
-        function renderTeam(id) {
-            const t = teams[id];
-            const chip = document.createElement('div');
-            chip.className = 'team-chip';
-            chip.id = id;
-            chip.draggable = true;
-            chip.innerHTML = `
-                <span>${t.name}</span>
-                <span class="score-val" id="s-${id}">${t.score}</span>
-                <button class="warn-btn" onclick="addWarn(event, '${id}')">⚠️</button>
-            `;
-            chip.ondragstart = e => e.dataTransfer.setData('text', id);
-            document.getElementById('dock').appendChild(chip);
-        }
-
-        function handleDrop(e, cell) {
-            e.preventDefault();
-            cell.classList.remove('over');
-            const teamId = e.dataTransfer.getData('text');
-            const points = parseInt(cell.dataset.value);
-
-            teams[teamId].score += points;
-            document.getElementById(`s-${teamId}`).innerText = teams[teamId].score;
-            cell.classList.add('used');
+            const ids = Object.keys(teams);
+            if(ids.length === 0) { addT('Команда 1'); addT('Команда 2'); }
+            else { ids.forEach(id => renderT(id)); }
             
-            save();
-            // Маленький эффект при попадании
-            cell.style.background = '#4ade80';
-            setTimeout(() => cell.style.background = '', 300);
+            setupTouch();
         }
 
-        function addWarn(e, id) {
-            e.stopPropagation();
-            teams[id].warns++;
-            if(teams[id].warns > 1) {
-                teams[id].score -= 20;
-                document.getElementById(`s-${id}`).innerText = teams[id].score;
-                alert(`Штраф -20 для ${teams[id].name}`);
-            } else {
-                alert(`Предупреждение для ${teams[id].name}`);
-            }
+        function addT(name = "Команда") {
+            if(Object.keys(teams).length >= 6) return;
+            const id = 't' + Date.now();
+            teams[id] = { name, mems: 5, score: 0 };
+            renderT(id);
             save();
         }
 
-        function addTeamPrompt() {
-            const n = prompt("Введите название команды:");
-            if(n) createTeam(n);
+        function renderT(id) {
+            const t = teams[id];
+            const div = document.createElement('div');
+            div.className = 'team-chip';
+            div.id = id;
+            div.innerHTML = `
+                <input class="team-name" value="${t.name}" oninput="upd('${id}','name',this.value)">
+                <input type="number" class="team-mems" value="${t.mems}" oninput="upd('${id}','mems',this.value)">
+                <span class="team-score" id="s-${id}">${t.score}</span>
+                <button style="background:none; border:none; color:red; cursor:pointer;" onclick="warn('${id}')">⚠️</button>
+            `;
+            document.getElementById('dock').appendChild(div);
         }
 
-        function showWinners() {
+        function upd(id, f, v) { teams[id][f] = v; save(); }
+
+        function warn(id) {
+            teams[id].score -= 20;
+            document.getElementById(`s-${id}`).innerText = teams[id].score;
+            save();
+        }
+
+        // Логика перетаскивания для ТЕЛЕФОНА и ПК
+        function setupTouch() {
+            let activeChip = null;
+            let startX, startY;
+
+            document.addEventListener('touchstart', e => {
+                if(e.target.closest('.team-chip')) {
+                    activeChip = e.target.closest('.team-chip');
+                    const rect = activeChip.getBoundingClientRect();
+                    startX = e.touches[0].clientX - rect.left;
+                    startY = e.touches[0].clientY - rect.top;
+                    activeChip.style.position = 'fixed';
+                    activeChip.style.zIndex = '1000';
+                }
+            }, {passive: false});
+
+            document.addEventListener('touchmove', e => {
+                if(!activeChip) return;
+                e.preventDefault();
+                const x = e.touches[0].clientX - startX;
+                const y = e.touches[0].clientY - startY;
+                activeChip.style.left = x + 'px';
+                activeChip.style.top = y + 'px';
+                
+                // Подсветка ячейки
+                const cell = getCellUnder(e.touches[0].clientX, e.touches[0].clientY);
+                document.querySelectorAll('.cell').forEach(c => c.classList.remove('active'));
+                if(cell) cell.classList.add('active');
+            }, {passive: false});
+
+            document.addEventListener('touchend', e => {
+                if(!activeChip) return;
+                const touch = e.changedTouches[0];
+                const cell = getCellUnder(touch.clientX, touch.clientY);
+                
+                if(cell && !cell.classList.contains('used')) {
+                    const points = parseInt(cell.dataset.v);
+                    const tid = activeChip.id;
+                    teams[tid].score += points;
+                    document.getElementById(`s-${tid}`).innerText = teams[tid].score;
+                    cell.classList.add('used');
+                    save();
+                }
+
+                activeChip.style.position = 'relative';
+                activeChip.style.left = '0'; activeChip.style.top = '0';
+                document.querySelectorAll('.cell').forEach(c => c.classList.remove('active'));
+                activeChip = null;
+            });
+        }
+
+        function getCellUnder(x, y) {
+            const el = document.elementFromPoint(x, y);
+            return el && el.classList.contains('cell') ? el : null;
+        }
+
+        function showWin() {
             const res = Object.values(teams).sort((a,b) => b.score - a.score);
             const list = document.getElementById('ranks');
             list.innerHTML = '';
-            res.forEach((r, i) => {
-                list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #222">
-                    <span>${i+1}. ${r.name}</span><b>${r.score}</b>
+            res.forEach(r => {
+                list.innerHTML += `<div style="display:flex; justify-content:space-between; color:white; padding:10px; border-bottom:1px solid #1144aa">
+                    <span>${r.name}</span><b>${r.score}</b>
                 </div>`;
             });
             document.getElementById('modal').style.display = 'flex';
@@ -210,20 +248,20 @@
         }
 
         function boom() {
-            for(let i=0; i<100; i++) {
-                const d = document.createElement('div');
-                d.className = 'dot';
-                d.style.left = '50%'; d.style.top = '50%';
-                d.style.background = ['#4ade80', '#22d3ee', '#facc15'][i%3];
-                d.style.setProperty('--x', (Math.random()-0.5)*800+'px');
-                d.style.setProperty('--y', (Math.random()-0.5)*800+'px');
-                document.body.appendChild(d);
-                setTimeout(() => d.remove(), 1500);
+            for(let i=0; i<120; i++) {
+                const p = document.createElement('div');
+                p.className = 'part';
+                p.style.left = '50%'; p.style.top = '50%';
+                p.style.background = ['#ffcc00', '#ffffff', '#00ced1'][i%3];
+                p.style.setProperty('--x', (Math.random()-0.5)*1000+'px');
+                p.style.setProperty('--y', (Math.random()-0.5)*1000+'px');
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 1500);
             }
         }
 
-        function resetGame() { if(confirm("Сбросить игру?")) { localStorage.removeItem('eclab_board'); location.reload(); } }
-        function save() { localStorage.setItem('eclab_board', JSON.stringify(teams)); }
+        function resetG() { if(confirm("Сбросить?")) { localStorage.removeItem('si_game'); location.reload(); } }
+        function save() { localStorage.setItem('si_game', JSON.stringify(teams)); }
 
         init();
     </script>
