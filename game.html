@@ -6,37 +6,35 @@
     <style>
         :root {
             --bg: #05070a;
-            --card-bg: rgba(30, 41, 59, 0.5);
+            --card-bg: #111827; /* Плотный фон вместо прозрачного */
             --accent-green: #4ade80;
             --accent-blue: #38bdf8;
-            --border: rgba(255, 255, 255, 0.1);
+            --border: #1e293b;
         }
 
         body {
             font-family: 'Inter', -apple-system, sans-serif;
-            background: radial-gradient(circle at 50% 0%, #1e293b 0%, #05070a 100%);
+            background: #05070a; /* Чистый черный для надежности */
             color: #f8fafc; margin: 0; padding: 40px 20px;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
 
-        /* Модный градиент заголовка */
         .header-logo {
-            font-size: clamp(32px, 5vw, 64px);
+            font-size: 64px;
             font-weight: 900;
             background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.3));
             margin-bottom: 10px;
             text-transform: uppercase; letter-spacing: -2px;
         }
 
         .stats-bar {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
+            background: #1e293b;
+            border: 1px solid var(--accent-blue);
             padding: 8px 20px; border-radius: 50px;
             font-size: 14px; color: var(--accent-blue);
-            margin-bottom: 40px; backdrop-filter: blur(10px);
+            margin-bottom: 40px;
         }
 
         .grid {
@@ -45,77 +43,70 @@
         }
 
         .team-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
+            background: var(--card-bg); /* Теперь блок точно залит цветом */
+            border: 2px solid var(--border);
             border-radius: 24px; padding: 30px;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            position: relative; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
         }
+
+        /* Полоска сверху для красоты */
         .team-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            content: ''; position: absolute; top: -1px; left: -1px; right: -1px; height: 4px;
             background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+            border-radius: 24px 24px 0 0;
         }
 
         .team-name {
             font-size: 28px; font-weight: 800; background: transparent;
-            color: #fff; border: none; border-bottom: 1px solid var(--border);
+            color: #fff; border: none; border-bottom: 2px solid var(--border);
             width: 100%; text-align: center; margin-bottom: 10px;
         }
-        .team-name:focus { outline: none; border-bottom-color: var(--accent-blue); }
 
-        .members-label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+        .members-label { font-size: 12px; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
         .members-input {
-            background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+            background: #05070a; border: 1px solid var(--accent-green);
             color: var(--accent-green); width: 60px; border-radius: 6px;
             text-align: center; font-weight: bold; padding: 4px;
         }
 
         .score {
-            font-size: 90px; font-weight: 900; color: #fff;
-            margin: 20px 0; font-variant-numeric: tabular-nums;
-            text-shadow: 0 0 30px rgba(255,255,255,0.1);
+            font-size: 80px; font-weight: 900; color: #fff;
+            margin: 15px 0; text-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
         }
 
         .controls { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
         .btn-add {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            background: #1e293b; border: 1px solid var(--border);
             color: #fff; padding: 15px 0; border-radius: 12px;
-            font-weight: bold; cursor: pointer; transition: 0.2s;
+            font-weight: bold; cursor: pointer;
         }
-        .btn-add:hover { background: #fff; color: #000; transform: scale(1.05); }
+        .btn-add:hover { background: var(--accent-blue); color: #000; }
 
         .btn-warn {
             grid-column: span 5; margin-top: 15px; background: transparent;
-            border: 1px solid rgba(239, 68, 68, 0.4); color: #ef4444;
+            border: 1px solid #ef4444; color: #ef4444;
             padding: 10px; border-radius: 12px; cursor: pointer; font-size: 11px;
-            font-weight: bold; letter-spacing: 1px;
         }
-        .btn-warn:hover { background: rgba(239, 68, 68, 0.1); }
 
-        .footer { margin-top: 60px; display: flex; gap: 30px; align-items: center; }
         .btn-finish {
             background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
             color: #05070a; padding: 18px 50px; border-radius: 16px;
             font-weight: 900; font-size: 1.2rem; border: none; cursor: pointer;
-            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3); transition: 0.3s;
         }
-        .btn-finish:hover { transform: scale(1.05); filter: brightness(1.1); }
 
-        /* Итоги */
         #modal {
             display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95);
-            backdrop-filter: blur(15px); justify-content: center; align-items: center; z-index: 1000;
+            justify-content: center; align-items: center; z-index: 1000;
         }
         .modal-content {
             background: #111827; padding: 40px; border-radius: 30px;
-            width: 450px; border: 1px solid var(--border); text-align: center;
+            width: 450px; border: 2px solid var(--accent-blue);
         }
         .res-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 20px; border-bottom: 1px solid var(--border); font-size: 22px;
+            display: flex; justify-content: space-between; padding: 15px;
+            border-bottom: 1px solid #1e293b; font-size: 22px;
         }
-        .first-place { color: var(--accent-green); font-weight: 900; font-size: 28px; }
     </style>
 </head>
 <body>
@@ -125,22 +116,22 @@
     
     <div class="grid" id="game-grid"></div>
 
-    <div class="footer">
+    <div class="footer" style="margin-top: 50px; display: flex; gap: 30px; align-items: center;">
         <button class="btn-finish" onclick="showResults()">ПОДВЕСТИ ИТОГИ</button>
-        <div style="color: #475569; cursor: pointer; font-size: 14px;" onclick="resetGame()">Сбросить сессию</div>
+        <div style="color: #475569; cursor: pointer;" onclick="resetGame()">Сбросить сессию</div>
     </div>
 
     <div id="modal">
         <div class="modal-content">
-            <h2 style="color: var(--accent-blue); margin-bottom: 30px;">Итоги викторины</h2>
+            <h2 style="color: var(--accent-blue); text-align: center;">Результаты</h2>
             <div id="results-list"></div>
-            <button class="btn-finish" style="width: 100%; margin-top: 30px;" onclick="document.getElementById('modal').style.display='none'">Вернуться</button>
+            <button class="btn-finish" style="width: 100%; margin-top: 30px;" onclick="document.getElementById('modal').style.display='none'">Закрыть</button>
         </div>
     </div>
 
     <script>
-        const points =;
-        let state = JSON.parse(localStorage.getItem('eclab_tech_v1')) || {
+        const points = [10, 20, 30, 40, 50];
+        let state = JSON.parse(localStorage.getItem('eclab_v3_stable')) || {
             teams: ["Команда 1", "Команда 2", "Команда 3", "Команда 4", "Команда 5", "Команда 6"],
             scores: Array(6).fill(0),
             warnings: Array(6).fill(0),
@@ -158,20 +149,19 @@
                     <div class="team-card">
                         <input class="team-name" value="${name}" onchange="update('teams', ${i}, this.value)">
                         <div class="members-label">
-                            👥 Участников: 
-                            <input type="number" class="members-input" value="${state.members[i]}" onchange="update('members', ${i}, this.value)">
+                            Участников: <input type="number" class="members-input" value="${state.members[i]}" onchange="update('members', ${i}, this.value)">
                         </div>
                         <div class="score">${state.scores[i]}</div>
                         <div class="controls">
                             ${points.map(p => `<button class="btn-add" onclick="add(${i}, ${p})">+${p}</button>`).join('')}
-                            <button class="btn-warn" onclick="warn(${i})">⚠ НАРУШЕНИЕ (${state.warnings[i]})</button>
+                            <button class="btn-warn" onclick="warn(${i})">⚠ НАРУШЕНИЯ: ${state.warnings[i]}</button>
                         </div>
                     </div>
                 `;
             });
 
             document.getElementById('total-members').innerText = total;
-            localStorage.setItem('eclab_tech_v1', JSON.stringify(state));
+            localStorage.setItem('eclab_v3_stable', JSON.stringify(state));
         }
 
         function update(key, i, val) { state[key][i] = val; render(); }
@@ -189,14 +179,13 @@
             })).sort((a, b) => b.score - a.score);
 
             list.innerHTML = sorted.map((t, i) => {
-                let medal = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : '🔹'));
-                let cls = i === 0 ? 'first-place' : '';
-                return `<div class="res-row ${cls}"><span>${medal} ${t.name}</span> <b>${t.score}</b></div>`;
+                let m = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : '🔹'));
+                return `<div class="res-row"><span>${m} ${t.name}</span> <b>${t.score}</b></div>`;
             }).join('');
             document.getElementById('modal').style.display = 'flex';
         }
 
-        function resetGame() { if(confirm("Удалить все данные игры?")) { localStorage.removeItem('eclab_tech_v1'); location.reload(); } }
+        function resetGame() { if(confirm("Сбросить игру?")) { localStorage.removeItem('eclab_v3_stable'); location.reload(); } }
         
         render();
     </script>
