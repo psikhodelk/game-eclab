@@ -3,138 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <title>EcLab 2.0 | Викторина</title>
+    <!-- Подключаем библиотеку фейерверка -->
     <script src="https://cdn.jsdelivr.net"></script>
     <style>
-        :root {
-            --primary: #38bdf8;
-            --accent: #4ade80;
-            --warning: #facc15;
-            --bg: #020617;
-            /* Плотный градиент для карточек */
-            --card-grad: linear-gradient(145deg, #1e293b, #0f172a);
-        }
-
+        /* ПРИНУДИТЕЛЬНЫЕ ЦВЕТА БЕЗ ПРОЗРАЧНОСТИ */
         body {
-            background-color: var(--bg) !important;
+            background-color: #000000 !important;
             color: #ffffff !important;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            margin: 0; padding: 40px;
+            font-family: 'Arial Black', sans-serif;
+            margin: 0; padding: 20px;
             display: flex; flex-direction: column; align-items: center;
         }
 
         .header-logo {
-            font-size: 72px; font-weight: 900;
-            background: linear-gradient(90deg, var(--accent), var(--primary));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
-            filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.3));
-        }
-
-        .stats-bar {
-            background: #1e293b; border: 2px solid var(--primary);
-            padding: 10px 30px; border-radius: 50px; margin-bottom: 40px;
-            font-weight: bold; box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+            font-size: 60px; color: #4ade80; margin: 20px 0;
+            text-shadow: 4px 4px #000, 0 0 20px #38bdf8;
         }
 
         .grid {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 30px; width: 100%; max-width: 1100px;
+            display: flex; flex-wrap: wrap; justify-content: center;
+            gap: 20px; width: 100%; max-width: 1200px;
         }
 
+        /* КАРТОЧКИ: ТЕПЕРЬ ЯРКИЕ И НЕПРОЗРАЧНЫЕ */
         .team-card {
-            background: var(--card-grad) !important; /* Плотный фон */
-            border: 2px solid #334155 !important;
-            border-radius: 30px; padding: 30px; text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: all 0.3s ease;
-        }
-        .team-card:hover { 
-            transform: translateY(-8px); 
-            border-color: var(--primary) !important;
-            box-shadow: 0 15px 40px rgba(56, 189, 248, 0.2);
+            background: #1e293b !important; /* Глубокий синий */
+            border: 5px solid #38bdf8 !important; /* Яркая голубая рамка */
+            border-radius: 20px;
+            width: 450px; padding: 25px;
+            box-sizing: border-box; text-align: center;
+            box-shadow: 10px 10px 0px #000;
         }
 
         .team-name {
-            font-size: 26px; font-weight: 800; background: #0f172a;
-            color: #ffffff; border: 2px solid #334155;
-            width: 100%; text-align: center; padding: 12px; margin-bottom: 20px;
-            border-radius: 15px; outline: none;
+            font-size: 24px; font-weight: 900; width: 90%;
+            background: #000; color: #fff; border: 2px solid #4ade80;
+            padding: 10px; border-radius: 10px; text-align: center;
         }
 
         .score {
-            font-size: 100px; font-weight: 900; color: var(--primary);
-            margin: 15px 0; line-height: 1;
-            text-shadow: 2px 2px 0px #000;
+            font-size: 120px; font-weight: 900; color: #38bdf8;
+            margin: 10px 0; line-height: 1;
         }
 
-        .controls { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .controls { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
 
         .btn-add {
-            background: #334155; color: white; border: none;
-            padding: 15px 0; border-radius: 12px; font-weight: bold; cursor: pointer;
-            font-size: 16px; transition: 0.2s;
+            background: #334155; color: #fff; border: 1px solid #fff;
+            padding: 15px 0; border-radius: 8px; font-weight: bold; cursor: pointer;
         }
-        .btn-add:hover { background: var(--accent); color: #000; transform: scale(1.1); }
+        .btn-add:hover { background: #4ade80; color: #000; }
 
+        /* ЖЕЛТАЯ КНОПКА ПРЕДУПРЕЖДЕНИЯ */
         .btn-warn {
-            grid-column: span 5; margin-top: 20px;
-            background: rgba(250, 204, 21, 0.1); color: var(--warning); 
-            border: 2px solid var(--warning);
-            padding: 14px; border-radius: 15px; cursor: pointer;
-            font-weight: 800; font-size: 16px;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            grid-column: span 5; margin-top: 15px;
+            background: #facc15 !important; color: #000 !important;
+            border: none; padding: 15px; border-radius: 10px;
+            font-weight: 900; cursor: pointer; font-size: 16px;
         }
-        .btn-warn:hover { background: var(--warning); color: #000; }
 
         .btn-finish {
-            background: linear-gradient(90deg, var(--accent), var(--primary));
-            color: #000; padding: 25px 70px; border-radius: 20px;
-            font-weight: 900; font-size: 32px; border: none; cursor: pointer; 
-            margin-top: 60px; box-shadow: 0 10px 30px rgba(74, 222, 128, 0.4);
+            background: #4ade80; color: #000; padding: 25px 60px;
+            border-radius: 50px; font-weight: 900; font-size: 30px;
+            border: 4px solid #fff; cursor: pointer; margin: 40px 0;
+            box-shadow: 0 0 30px rgba(74, 222, 128, 0.6);
         }
-        .btn-finish:hover { transform: scale(1.05); }
 
+        /* ОКНО ИТОГОВ */
         #modal {
-            display: none; position: fixed; inset: 0; 
-            background: rgba(0,0,0,0.95); z-index: 9999;
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.95); z-index: 10000;
             justify-content: center; align-items: center;
         }
         .modal-content {
-            background: #1e293b; padding: 50px; border-radius: 40px;
-            width: 500px; border: 3px solid var(--primary); text-align: center;
+            background: #1e293b; padding: 50px; border-radius: 30px;
+            border: 5px solid #4ade80; width: 500px; text-align: center;
         }
-        .res-row { 
-            display: flex; justify-content: space-between; 
-            padding: 20px; border-bottom: 1px solid #334151; font-size: 28px;
+        .res-row {
+            display: flex; justify-content: space-between;
+            padding: 15px; border-bottom: 2px solid #334151; font-size: 32px;
         }
     </style>
 </head>
 <body>
 
     <div class="header-logo">EcLab 2.0</div>
-    <div class="stats-bar">👥 ВСЕГО УЧАСТНИКОВ: <span id="total-val">0</span></div>
     
-    <div class="grid" id="main-grid"></div>
-
-    <button class="btn-finish" onclick="finish()">ЗАВЕРШИТЬ ИГРУ</button>
-    
-    <div style="margin-top:30px; color:#475569; cursor:pointer; font-size:14px;" onclick="clearAll()">
-        Сбросить всё (очистка памяти)
+    <div class="grid" id="main-grid">
+        <!-- Скрипт вставит карточки сюда -->
     </div>
+
+    <button class="btn-finish" onclick="startFinal()">ПОДВЕСТИ ИТОГИ</button>
 
     <div id="modal">
         <div class="modal-content">
-            <h2 style="color:var(--accent); font-size: 42px; margin-top:0;">Результаты</h2>
+            <h1 style="color:#4ade80; font-size: 45px; margin-top:0;">ЧЕМПИОНЫ</h1>
             <div id="res-list"></div>
-            <button class="btn-finish" style="font-size:20px; padding:15px 30px; margin-top:30px;" onclick="document.getElementById('modal').style.display='none'">Закрыть</button>
+            <button class="btn-finish" style="font-size:20px; padding:15px;" onclick="document.getElementById('modal').style.display='none'">ВЕРНУТЬСЯ</button>
         </div>
     </div>
 
     <script>
         const points =;
         
-        let game = JSON.parse(localStorage.getItem('eclab_v3')) || {
-            teams: ["Команда 1", "Команда 2", "Команда 3", "Команда 4", "Команда 5", "Команда 6"],
+        let game = JSON.parse(localStorage.getItem('eclab_v5')) || {
+            teams: ["КОМАНДА 1", "КОМАНДА 2", "КОМАНДА 3", "КОМАНДА 4", "КОМАНДА 5", "КОМАНДА 6"],
             scores:,
             warns:,
             members:
@@ -143,19 +116,16 @@
         function draw() {
             const grid = document.getElementById('main-grid');
             grid.innerHTML = '';
-            let total = 0;
-            
             game.teams.forEach((name, i) => {
-                total += parseInt(game.members[i] || 0);
                 grid.innerHTML += `
                     <div class="team-card">
                         <input class="team-name" value="${name}" onchange="upd('teams', ${i}, this.value)">
-                        <div style="font-size:16px; color:#94a3b8; margin-bottom:15px; font-weight:600;">
-                            Участников: <input type="number" value="${game.members[i]}" 
-                            style="width:60px; background:#000; color:var(--accent); border:1px solid var(--primary); border-radius:8px; text-align:center; padding:5px;" 
+                        <div style="margin: 10px 0; color: #94a3b8;">
+                            УЧАСТНИКОВ: <input type="number" value="${game.members[i]}" 
+                            style="width:50px; background:#000; color:#4ade80; border:1px solid #38bdf8; text-align:center;" 
                             onchange="upd('members', ${i}, this.value)">
                         </div>
-                        <div class="score">${game.scores[i]}</div>
+                        <div class="score" id="score-${i}">${game.scores[i]}</div>
                         <div class="controls">
                             ${points.map(p => `<button class="btn-add" onclick="add(${i}, ${p})">+${p}</button>`).join('')}
                             <button class="btn-warn" onclick="warning(${i})">
@@ -165,16 +135,18 @@
                     </div>
                 `;
             });
-            document.getElementById('total-val').innerText = total;
-            localStorage.setItem('eclab_v3', JSON.stringify(game));
+            localStorage.setItem('eclab_v5', JSON.stringify(game));
         }
 
         function upd(key, i, val) { 
-            game[key][i] = (key === 'teams') ? val : parseInt(val || 0); 
+            game[key][i] = (key === 'teams') ? val.toUpperCase() : parseInt(val || 0); 
             draw(); 
         }
 
-        function add(i, p) { game.scores[i] += p; draw(); }
+        function add(i, p) { 
+            game.scores[i] += p; 
+            draw(); 
+        }
 
         function warning(i) {
             game.warns[i]++;
@@ -182,48 +154,42 @@
             draw();
         }
 
-        function finish() {
-            // Эпичный затяжной фейерверк
-            var end = Date.now() + (3 * 1000);
-            var colors = ['#4ade80', '#38bdf8', '#facc15'];
+        // ГЛАВНАЯ ФУНКЦИЯ ФИНАЛА
+        function startFinal() {
+            // 1. ЗАПУСКАЕМ ФЕЙЕРВЕРК
+            const duration = 5 * 1000;
+            const animationEnd = Date.now() + duration;
 
-            (function frame() {
-              confetti({
-                particleCount: 3,
-                angle: 60,
-                spread: 55,
-                origin: { x: 0 },
-                colors: colors
-              });
-              confetti({
-                particleCount: 3,
-                angle: 120,
-                spread: 55,
-                origin: { x: 1 },
-                colors: colors
-              });
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
 
-              if (Date.now() < end) {
-                requestAnimationFrame(frame);
-              }
-            }());
+                confetti({
+                    particleCount: 40,
+                    startVelocity: 30,
+                    spread: 360,
+                    origin: { x: Math.random(), y: Math.random() - 0.2 },
+                    colors: ['#4ade80', '#38bdf8', '#facc15', '#ffffff']
+                });
+            }, 200);
 
+            // 2. ПОДГОТАВЛИВАЕМ СПИСОК
             const list = document.getElementById('res-list');
             const sorted = game.teams.map((name, i) => ({ name, score: game.scores[i] }))
                                      .sort((a, b) => b.score - a.score);
             
             list.innerHTML = sorted.map((t, i) => {
-                let m = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : '•'));
-                return `<div class="res-row"><span>${m} ${t.name}</span> <b>${t.score}</b></div>`;
+                let icon = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : '•'));
+                return `<div class="res-row"><span>${icon} ${t.name}</span> <b>${t.score}</b></div>`;
             }).join('');
             
+            // 3. ПОКАЗЫВАЕМ ОКНО ЧЕРЕЗ 2 СЕКУНДЫ (после начала фейерверка)
             setTimeout(() => {
                 document.getElementById('modal').style.display = 'flex';
-            }, 500);
+            }, 2500);
         }
 
-        function clearAll() { if(confirm("Очистить все баллы?")) { localStorage.clear(); location.reload(); } }
-        
+        // Запуск при старте
         draw();
     </script>
 </body>
