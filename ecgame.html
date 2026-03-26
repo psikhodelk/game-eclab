@@ -3,69 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcLab 2.0 Викторина</title>
+    <title>EcLab 2.0 | Dark Edition</title>
+    <!-- Библиотека для фейерверка -->
     <script src="https://cdn.jsdelivr.net"></script>
     <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f1f5f9;
+            --accent: linear-gradient(90deg, #4ade80, #22d3ee);
+            --border: #334155;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f4f8;
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
         }
 
         h1 {
-            background: linear-gradient(90deg, #90ee90, #00ced1);
+            background: var(--accent);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-size: 3rem;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            margin: 20px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .stats-bar {
+            background: var(--card-bg);
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
             margin-bottom: 30px;
-            text-align: center;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        #totalParticipantsDisplay {
+            color: #4ade80;
+            font-weight: bold;
         }
 
         .teams-container {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
-            justify-content: center;
-            max-width: 1200px;
+            width: 100%;
+            max-width: 1100px;
         }
 
         .team-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            width: 300px;
-            transition: transform 0.2s;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
             position: relative;
+            overflow: hidden;
+        }
+
+        .team-card:hover {
+            border-color: #22d3ee;
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.1);
         }
 
         .team-name-input {
-            width: 100%;
+            background: transparent;
             border: none;
-            border-bottom: 2px solid #ddd;
-            font-size: 1.2rem;
-            font-weight: bold;
+            border-bottom: 2px solid var(--border);
+            color: white;
+            font-size: 1.4rem;
+            width: 100%;
             margin-bottom: 10px;
             outline: none;
         }
 
-        .members-count {
+        .team-name-input:focus { border-color: #4ade80; }
+
+        .members-input {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #94a3b8;
+            padding: 5px 10px;
             width: 100%;
-            border: none;
-            color: #666;
+            box-sizing: border-box;
             margin-bottom: 15px;
-            outline: none;
         }
 
         .score-display {
-            font-size: 2.5rem;
+            font-size: 3.5rem;
+            font-weight: 800;
             text-align: center;
-            color: #2c3e50;
-            margin: 15px 0;
+            margin: 10px 0;
+            color: #f8fafc;
+            text-shadow: 0 0 15px rgba(255,255,255,0.1);
         }
 
         .buttons-grid {
@@ -77,62 +119,70 @@
         button {
             cursor: pointer;
             border: none;
-            border-radius: 8px;
-            padding: 10px;
+            border-radius: 12px;
+            padding: 12px;
             font-weight: bold;
-            transition: opacity 0.2s;
+            color: white;
+            transition: all 0.2s;
         }
 
-        .btn-plus { background-color: #e3f9e5; color: #2e7d32; }
-        .btn-warn { background-color: #fff3e0; color: #ef6c00; grid-column: span 3; }
+        .btn-point { background: #334155; }
+        .btn-point:hover { background: #475569; }
+
+        .btn-warn {
+            grid-column: span 3;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+            margin-top: 10px;
+        }
+        .btn-warn:hover { background: #ef4444; color: white; }
 
         .add-team-btn {
-            background: #90ee90;
-            color: white;
-            font-size: 2rem;
-            width: 60px;
-            height: 60px;
+            background: var(--accent);
+            width: 60px; height: 60px;
             border-radius: 50%;
+            font-size: 2rem;
             margin: 40px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.4);
         }
 
         .results-btn {
-            background: linear-gradient(90deg, #00ced1, #90ee90);
-            color: white;
-            padding: 15px 40px;
-            font-size: 1.5rem;
-            border-radius: 30px;
-            margin-top: 20px;
+            background: var(--accent);
+            padding: 18px 50px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.3);
         }
 
         #modal {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            justify-content: center; align-items: center;
         }
 
         .modal-content {
-            background: white;
+            background: var(--card-bg);
             padding: 40px;
-            border-radius: 20px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            width: 90%; max-width: 500px;
             text-align: center;
-            max-width: 500px;
-            width: 90%;
         }
 
-        .ranking-item {
-            font-size: 1.5rem;
-            margin: 10px 0;
+        .ranking-row {
             display: flex;
             justify-content: space-between;
+            padding: 15px;
+            margin: 10px 0;
+            background: #0f172a;
+            border-radius: 12px;
+            font-size: 1.2rem;
         }
     </style>
 </head>
@@ -140,106 +190,129 @@
 
     <h1>EcLab 2.0 Викторина</h1>
 
-    <div class="teams-container" id="teamsContainer">
-        <!-- Команды добавятся здесь -->
+    <div class="stats-bar">
+        Всего участников: <span id="totalParticipantsDisplay">0</span>
     </div>
 
-    <button class="add-team-btn" id="addTeamBtn" onclick="addTeam()">+</button>
+    <div class="teams-container" id="container"></div>
 
-    <button class="results-btn" onclick="showResults()">ПОДВЕСТИ ИТОГИ</button>
+    <button class="add-team-btn" id="addBtn" onclick="createTeam()">+</button>
+    
+    <button class="results-btn" onclick="finishGame()">ПОДВЕСТИ ИТОГИ</button>
 
     <div id="modal">
         <div class="modal-content">
-            <h2>🏆 Итоговый рейтинг</h2>
-            <div id="rankingList"></div>
-            <button onclick="document.getElementById('modal').style.display='none'" style="margin-top:20px; background:#eee;">Закрыть</button>
+            <h2 style="font-size: 2rem; margin-bottom: 20px;">🏆 Победители</h2>
+            <div id="rankList"></div>
+            <button onclick="closeModal()" style="margin-top:20px; background:#334155;">Вернуться к игре</button>
         </div>
     </div>
 
     <script>
         let teamCount = 0;
-        const maxTeams = 6;
+        const scores = {};
+        const warns = {};
 
-        function addTeam() {
-            if (teamCount >= maxTeams) return;
+        function createTeam() {
+            if (teamCount >= 6) return;
             teamCount++;
+            
+            const id = `t${teamCount}`;
+            scores[id] = 0;
+            warns[id] = 0;
 
-            const container = document.getElementById('teamsContainer');
             const card = document.createElement('div');
             card.className = 'team-card';
-            card.id = `team-${teamCount}`;
             card.innerHTML = `
-                <input type="text" class="team-name-input" placeholder="Название команды ${teamCount}">
-                <input type="text" class="members-count" placeholder="Кол-во участников...">
-                <div class="score-display" id="score-${teamCount}">0</div>
+                <input type="text" class="team-name-input" placeholder="Команда ${teamCount}">
+                <input type="number" class="members-input" placeholder="Кол-во участников" oninput="updateTotal()">
+                <div class="score-display" id="score-${id}">0</div>
                 <div class="buttons-grid">
-                    <button class="btn-plus" onclick="updateScore(${teamCount}, 10)">+10</button>
-                    <button class="btn-plus" onclick="updateScore(${teamCount}, 20)">+20</button>
-                    <button class="btn-plus" onclick="updateScore(${teamCount}, 30)">+30</button>
-                    <button class="btn-plus" onclick="updateScore(${teamCount}, 40)">+40</button>
-                    <button class="btn-plus" onclick="updateScore(${teamCount}, 50)">+50</button>
-                    <button class="btn-warn" onclick="addWarning(${teamCount})">Предупреждение (⚠ <span id="warn-count-${teamCount}">0</span>)</button>
+                    <button class="btn-point" onclick="addPts('${id}', 10)">10</button>
+                    <button class="btn-point" onclick="addPts('${id}', 20)">20</button>
+                    <button class="btn-point" onclick="addPts('${id}', 30)">30</button>
+                    <button class="btn-point" onclick="addPts('${id}', 40)">40</button>
+                    <button class="btn-point" onclick="addPts('${id}', 50)">50</button>
+                    <button class="btn-warn" onclick="handleWarn('${id}')">Предупреждение (⚠ <span id="w-${id}">0</span>)</button>
                 </div>
             `;
-            container.appendChild(card);
+            document.getElementById('container').appendChild(card);
+            if(teamCount === 6) document.getElementById('addBtn').style.display = 'none';
+        }
 
-            if (teamCount === maxTeams) {
-                document.getElementById('addTeamBtn').style.display = 'none';
+        function addPts(id, val) {
+            scores[id] += val;
+            document.getElementById(`score-${id}`).innerText = scores[id];
+        }
+
+        function handleWarn(id) {
+            warns[id]++;
+            document.getElementById(`w-${id}`).innerText = warns[id];
+            if (warns[id] > 1) {
+                addPts(id, -20);
+                triggerShake(id);
             }
         }
 
-        function updateScore(id, points) {
-            const el = document.getElementById(`score-${id}`);
-            el.innerText = parseInt(el.innerText) + points;
+        function updateTotal() {
+            let total = 0;
+            document.querySelectorAll('.members-input').forEach(input => {
+                total += parseInt(input.value) || 0;
+            });
+            document.getElementById('totalParticipantsDisplay').innerText = total;
         }
 
-        function addWarning(id) {
-            const warnEl = document.getElementById(`warn-count-${id}`);
-            let warnings = parseInt(warnEl.innerText) + 1;
-            warnEl.innerText = warnings;
+        function triggerShake(id) {
+            const card = document.getElementById(`score-${id}`).parentElement;
+            card.style.borderColor = '#ef4444';
+            setTimeout(() => card.style.borderColor = 'var(--border)', 1000);
+        }
+
+        function finishGame() {
+            const results = [];
+            document.querySelectorAll('.team-card').forEach((card, index) => {
+                const id = `t${index + 1}`;
+                const name = card.querySelector('.team-name-input').value || `Команда ${index + 1}`;
+                results.push({ name, score: scores[id] });
+            });
+
+            results.sort((a, b) => b.score - a.score);
             
-            if (warnings > 1) {
-                updateScore(id, -20);
-                alert('Повторное предупреждение! Штраф -20 баллов.');
-            }
-        }
-
-        function showResults() {
-            const teams = [];
-            for (let i = 1; i <= teamCount; i++) {
-                const name = document.querySelector(`#team-${i} .team-name-input`).value || `Команда ${i}`;
-                const score = parseInt(document.getElementById(`score-${i}`).innerText);
-                teams.push({ name, score });
-            }
-
-            teams.sort((a, b) => b.score - a.score);
-
-            const list = document.getElementById('rankingList');
+            const list = document.getElementById('rankList');
             list.innerHTML = '';
-            const medals = ['🥇', '🥈', '🥉', '👤', '👤', '👤'];
+            const medals = ['🥇', '🥈', '🥉', '🏅', '🏅', '🏅'];
 
-            teams.forEach((team, index) => {
+            results.forEach((r, i) => {
                 list.innerHTML += `
-                    <div class="ranking-item">
-                        <span>${medals[index] || '👤'} ${team.name}</span>
-                        <b>${team.score}</b>
+                    <div class="ranking-row">
+                        <span>${medals[i]} ${r.name}</span>
+                        <span style="color:#4ade80">${r.score}</span>
                     </div>
                 `;
             });
 
             document.getElementById('modal').style.display = 'flex';
             
-            // Фейерверк
-            confetti({
-                particleCount: 150,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
+            // Настоящий фейерверк
+            const duration = 5 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                const particleCount = 50 * (timeLeft / duration);
+                confetti({ ...defaults, particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } });
+            }, 250);
         }
 
-        // Инициализация двух команд
-        addTeam();
-        addTeam();
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // Старт с 2 командами
+        createTeam();
+        createTeam();
     </script>
 </body>
 </html>
