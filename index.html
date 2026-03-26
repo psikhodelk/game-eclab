@@ -2,101 +2,85 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Пульт: Своя Игра</title>
+    <title>EcLab 2.0</title>
+    <script src="https://cdn.jsdelivr.net"></script>
     <style>
-        body { font-family: sans-serif; background-color: #f4f7f6; text-align: center; padding: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; max-width: 1000px; margin: 0 auto; }
-        .card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-top: 5px solid #3498db; }
-        .team-name { font-size: 1.1em; font-weight: bold; width: 90%; border: none; border-bottom: 2px dashed #ccc; text-align: center; margin-bottom: 10px; outline: none; }
-        .score { font-size: 3rem; font-weight: bold; margin: 10px 0; color: #2c3e50; }
-        .btn-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
-        button { border: none; border-radius: 5px; padding: 10px; font-weight: bold; cursor: pointer; }
-        .btn-add { background: #2ecc71; color: white; }
-        .btn-sub { background: #e74c3c; color: white; grid-column: span 3; }
-        .controls { margin-top: 30px; display: flex; gap: 10px; justify-content: center; }
-        .btn-result { background: #f1c40f; color: #2c3e50; padding: 15px 30px; font-size: 1.2em; }
-        .btn-reset { background: #95a5a6; color: white; padding: 15px 20px; }
-        /* Стиль для окна итогов */
-        #modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; box-shadow: 0 0 100px rgba(0,0,0,0.5); border-radius: 15px; z-index: 10; width: 80%; max-width: 400px; }
-        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 5; }
+        :root { --bg: #05070a; --card: #111827; --accent: #38bdf8; --green: #4ade80; --border: #1e293b; }
+        body { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
+        .header-logo { font-size: 64px; font-weight: 900; background: linear-gradient(90deg, var(--green), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
+        .stats-bar { background: #1e293b; border: 1px solid var(--accent); padding: 8px 20px; border-radius: 50px; margin: 20px 0 40px; color: var(--accent); font-weight: bold; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; width: 100%; max-width: 1000px; }
+        .team-card { background: var(--card); border: 2px solid var(--border); border-radius: 24px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .team-name { font-size: 28px; font-weight: 800; background: transparent; color: #fff; border: none; border-bottom: 2px solid var(--border); width: 100%; text-align: center; margin-bottom: 10px; outline: none; }
+        .score { font-size: 90px; font-weight: 900; margin: 15px 0; }
+        .controls { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        button { cursor: pointer; border-radius: 10px; font-weight: bold; transition: 0.2s; border: 1px solid var(--border); }
+        .btn-add { background: #1f2937; color: #fff; padding: 15px 0; }
+        .btn-add:hover { background: #fff; color: #000; }
+        .btn-warn { grid-column: span 5; margin-top: 15px; background: transparent; border-color: #ef4444; color: #ef4444; padding: 10px; font-size: 11px; }
+        .btn-finish { background: linear-gradient(90deg, var(--green), var(--accent)); color: #000; padding: 20px 60px; border-radius: 15px; font-weight: 900; font-size: 24px; border: none; margin-top: 50px; }
+        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; z-index: 100; }
+        .modal-content { background: #111827; padding: 40px; border-radius: 30px; width: 400px; border: 2px solid var(--accent); text-align: center; }
+        .res-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #1e293b; font-size: 22px; }
     </style>
 </head>
 <body>
 
-    <h1>Экономическая «Своя игра»</h1>
+    <h1 class="header-logo">EcLab 2.0</h1>
+    <div class="stats-bar">👥 Участников: <span id="total-val">0</span></div>
+    
+    <div class="grid" id="main-grid"></div>
 
-    <div class="grid" id="game-grid"></div>
+    <button class="btn-finish" onclick="finish()">ИТОГИ ИГРЫ</button>
+    <div style="margin-top:30px; color:#475569; cursor:pointer; font-size:12px;" onclick="reset()">Сбросить всё</div>
 
-    <div class="controls">
-        <button class="btn-result" onclick="showResults()">🏆 ПОДВЕСТИ ИТОГИ</button>
-        <button class="btn-reset" onclick="resetAll()">Сброс</button>
-    </div>
-
-    <!-- Окно с итогами -->
-    <div id="overlay" onclick="closeModal()"></div>
     <div id="modal">
-        <h2>Итоговая таблица</h2>
-        <div id="result-list" style="text-align: left; font-size: 1.2em; line-height: 2;"></div>
-        <button style="margin-top: 20px; width: 100%;" onclick="closeModal()">Закрыть</button>
+        <div class="modal-content">
+            <h2 style="color:var(--accent)">Результаты</h2>
+            <div id="res-list"></div>
+            <button class="btn-finish" style="font-size:16px; padding:15px; width:100%" onclick="document.getElementById('modal').style.display='none'">Назад</button>
+        </div>
     </div>
 
     <script>
-        const teamsCount = 6;
-        const points = [10, 20, 30, 40, 50];
-        const grid = document.getElementById('game-grid');
+        const pts = [10, 20, 30, 40, 50];
+        let st = JSON.parse(localStorage.getItem('eclab_v7')) || {
+            teams: ["Команда 1", "Команда 2", "Команда 3", "Команда 4", "Команда 5", "Команда 6"],
+            scores: [0,0,0,0,0,0], warns: [0,0,0,0,0,0], members: [0,0,0,0,0,0]
+        };
 
-        for (let i = 1; i <= teamsCount; i++) {
-            grid.innerHTML += `
-                <div class="card">
-                    <input type="text" class="team-name" id="name${i}" value="Команда ${i}">
-                    <div id="score${i}" class="score">0</div>
-                    <div class="btn-group">
-                        ${points.map(p => `<button class="btn-add" onclick="change(${i}, ${p})">+${p}</button>`).join('')}
-                        <button class="btn-sub" onclick="change(${i}, -20)">Штраф (-20)</button>
+        function draw() {
+            const g = document.getElementById('main-grid'); g.innerHTML = ''; let t = 0;
+            st.teams.forEach((n, i) => {
+                t += parseInt(st.members[i] || 0);
+                g.innerHTML += `<div class="team-card">
+                    <input class="team-name" value="${n}" onchange="upd('teams',${i},this.value)">
+                    <div style="font-size:12px;color:#64748b">Участников: 
+                        <input type="number" value="${st.members[i]}" style="width:40px;background:#000;color:var(--green);border:1px solid var(--border)" onchange="upd('members',${i},this.value)">
                     </div>
-                </div>
-            `;
-        }
-
-        function change(id, val) {
-            let el = document.getElementById('score' + id);
-            el.innerText = parseInt(el.innerText) + val;
-        }
-
-        function showResults() {
-            let data = [];
-            for (let i = 1; i <= teamsCount; i++) {
-                data.push({
-                    name: document.getElementById('name' + i).value,
-                    score: parseInt(document.getElementById('score' + i).innerText)
-                });
-            }
-
-            // Сортировка: от большего к меньшему
-            data.sort((a, b) => b.score - a.score);
-
-            let html = "";
-            data.forEach((team, index) => {
-                let icon = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : "🔹";
-                html += `<div>${icon} ${team.name}: <b>${team.score}</b></div>`;
+                    <div class="score">${st.scores[i]}</div>
+                    <div class="controls">
+                        ${pts.map(p => `<button class="btn-add" onclick="add(${i},${p})">+${p}</button>`).join('')}
+                        <button class="btn-warn" onclick="warn(${i})">⚠ НАРУШЕНИЯ: ${st.warns[i]}</button>
+                    </div>
+                </div>`;
             });
-
-            document.getElementById('result-list').innerHTML = html;
-            document.getElementById('modal').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('total-val').innerText = t;
+            localStorage.setItem('eclab_v7', JSON.stringify(st));
         }
 
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
+        function upd(k, i, v) { st[k][i] = k==='members'?parseInt(v)||0:v; draw(); }
+        function add(i, p) { st.scores[i] += p; draw(); }
+        function warn(i) { st.warns[i]++; if(st.warns[i] >= 2) st.scores[i] -= 20; draw(); }
+        function finish() {
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            const list = document.getElementById('res-list');
+            const srt = st.teams.map((n, i) => ({ n, s: st.scores[i] })).sort((a, b) => b.s - a.s);
+            list.innerHTML = srt.map((x, i) => `<div class="res-row"><span>${i==0?'🥇':i==1?'🥈':i==2?'🥉':'•'} ${x.n}</span><b>${x.s}</b></div>`).join('');
+            document.getElementById('modal').style.display = 'flex';
         }
-
-        function resetAll() {
-            if(confirm("Сбросить все баллы?")) {
-                for (let i = 1; i <= teamsCount; i++) document.getElementById('score' + i).innerText = 0;
-            }
-        }
+        function reset() { if(confirm("Сброс?")) { localStorage.removeItem('eclab_v7'); location.reload(); } }
+        draw();
     </script>
 </body>
 </html>
