@@ -1,168 +1,68 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>EcLab 2.0 | Викторина</title>
-    <script src="https://cdn.jsdelivr.net"></script>
-    <style>
-        /* ГАРАНТИРОВАННО ВИДИМЫЕ ЦВЕТА */
-        body {
-            background-color: #000000 !important; /* Черный фон */
-            color: #ffffff !important;
-            font-family: sans-serif;
-            margin: 0; padding: 40px;
-            display: flex; flex-direction: column; align-items: center;
-        }
+<script>
+    // ОШИБКА БЫЛА ЗДЕСЬ: массив не может быть пустым
+    const points = [10, 20, 30, 40, 50]; 
 
-        .header-logo {
-            font-size: 60px; font-weight: 900;
-            background: linear-gradient(90deg, #4ade80, #38bdf8);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
+    let game = JSON.parse(localStorage.getItem('eclab_fix_v1')) || {
+        teams: ["Команда 1", "Команда 2", "Команда 3", "Команда 4", "Команда 5", "Команда 6"],
+        scores: [0, 0, 0, 0, 0, 0],
+        warns: [0, 0, 0, 0, 0, 0],
+        members: [0, 0, 0, 0, 0, 0]
+    };
 
-        .stats-bar {
-            background: #1e293b; border: 2px solid #38bdf8;
-            padding: 10px 20px; border-radius: 50px; margin-bottom: 40px;
-        }
-
-        .grid {
-            display: grid; grid-template-columns: 1fr 1fr; /* Ровно 2 колонки */
-            gap: 30px; width: 100%; max-width: 1000px;
-        }
-
-        .team-card {
-            background: #111827 !important; /* Темно-серый ПЛОТНЫЙ фон */
-            border: 3px solid #334155 !important; /* Жирная рамка */
-            border-radius: 20px; padding: 30px; text-align: center;
-            display: block !important; visibility: visible !important; opacity: 1 !important;
-        }
-
-        .team-name {
-            font-size: 28px; font-weight: bold; background: #1f2937;
-            color: #ffffff; border: 1px solid #4b5563;
-            width: 90%; text-align: center; padding: 5px; margin-bottom: 15px;
-        }
-
-        .score {
-            font-size: 80px; font-weight: 900; color: #38bdf8;
-            margin: 20px 0; display: block;
-        }
-
-        .controls { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-
-        .btn-add {
-            background: #374151; color: white; border: none;
-            padding: 15px 0; border-radius: 10px; font-weight: bold; cursor: pointer;
-        }
-        .btn-add:hover { background: #4ade80; color: black; }
-
-        .btn-warn {
-            grid-column: span 5; margin-top: 15px;
-            background: #7f1d1d; color: white; border: none;
-            padding: 10px; border-radius: 10px; cursor: pointer;
-        }
-
-        .btn-finish {
-            background: linear-gradient(90deg, #4ade80, #38bdf8);
-            color: #000; padding: 20px 50px; border-radius: 15px;
-            font-weight: 900; font-size: 24px; border: none; cursor: pointer; margin-top: 40px;
-        }
-
-        /* Итоги */
-        #modal {
-            display: none; position: fixed; inset: 0; 
-            background: rgba(0,0,0,0.95); z-index: 9999;
-            justify-content: center; align-items: center;
-        }
-        .modal-content {
-            background: #1f2937; padding: 40px; border-radius: 30px;
-            width: 400px; border: 3px solid #38bdf8; text-align: center;
-        }
-        .res-row { 
-            display: flex; justify-content: space-between; 
-            padding: 15px; border-bottom: 1px solid #374151; font-size: 20px;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="header-logo">EcLab 2.0</div>
-    <div class="stats-bar">Участников всего: <span id="total-val">0</span></div>
-    
-    <div class="grid" id="main-grid"></div>
-
-    <button class="btn-finish" onclick="finish()">ИТОГИ ИГРЫ</button>
-    <div style="margin-top:20px; color:#4b5563; cursor:pointer;" onclick="clearAll()">Сбросить всё</div>
-
-    <div id="modal">
-        <div class="modal-content">
-            <h2 style="color:#4ade80">Результаты</h2>
-            <div id="res-list"></div>
-            <button class="btn-finish" style="font-size:16px; padding:10px" onclick="document.getElementById('modal').style.display='none'">Закрыть</button>
-        </div>
-    </div>
-
-    <script>
-        const points =;
-        let game = JSON.parse(localStorage.getItem('eclab_fix_v1')) || {
-            teams: ["Команда 1", "Команда 2", "Команда 3", "Команда 4", "Команда 5", "Команда 6"],
-            scores: [0,0,0,0,0,0],
-            warns: [0,0,0,0,0,0],
-            members: [0,0,0,0,0,0]
-        };
-
-        function draw() {
-            const grid = document.getElementById('main-grid');
-            grid.innerHTML = '';
-            let total = 0;
-            
-            game.teams.forEach((name, i) => {
-                total += parseInt(game.members[i] || 0);
-                grid.innerHTML += `
-                    <div class="team-card">
-                        <input class="team-name" value="${name}" onchange="upd('teams', ${i}, this.value)">
-                        <div style="font-size:12px; color:#94a3b8">
-                            Участников: <input type="number" value="${game.members[i]}" 
-                            style="width:50px; background:#000; color:#4ade80; border:1px solid #38bdf8" 
-                            onchange="upd('members', ${i}, this.value)">
-                        </div>
-                        <div class="score">${game.scores[i]}</div>
-                        <div class="controls">
-                            ${points.map(p => `<button class="btn-add" onclick="add(${i}, ${p})">+${p}</button>`).join('')}
-                            <button class="btn-warn" onclick="warning(${i})">Нарушения: ${game.warns[i]}</button>
-                        </div>
-                    </div>
-                `;
-            });
-            document.getElementById('total-val').innerText = total;
-            localStorage.setItem('eclab_fix_v1', JSON.stringify(game));
-        }
-
-        function upd(key, i, val) { game[key][i] = val; draw(); }
-        function add(i, p) { game.scores[i] += p; draw(); }
-        function warning(i) {
-            game.warns[i]++;
-            if(game.warns[i] >= 2) game.scores[i] -= 20;
-            draw();
-        }
-
-        function finish() {
-            confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 } });
-            const list = document.getElementById('res-list');
-            const sorted = game.teams.map((name, i) => ({ name, score: game.scores[i] }))
-                                     .sort((a, b) => b.score - a.score);
-            
-            list.innerHTML = sorted.map((t, i) => {
-                let m = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : '•'));
-                return `<div class="res-row"><span>${m} ${t.name}</span> <b>${t.score}</b></div>`;
-            }).join('');
-            document.getElementById('modal').style.display = 'flex';
-        }
-
-        function clearAll() { if(confirm("Сбросить?")) { localStorage.clear(); location.reload(); } }
+    function draw() {
+        const grid = document.getElementById('main-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        let total = 0;
         
+        game.teams.forEach((name, i) => {
+            total += parseInt(game.members[i] || 0);
+            grid.innerHTML += `
+                <div class="team-card">
+                    <input class="team-name" value="${name}" onchange="upd('teams', ${i}, this.value)">
+                    <div style="font-size:12px; color:#94a3b8">
+                        Участников: <input type="number" value="${game.members[i]}" 
+                        style="width:50px; background:#000; color:#4ade80; border:1px solid #38bdf8" 
+                        onchange="upd('members', ${i}, this.value)">
+                    </div>
+                    <div class="score">${game.scores[i]}</div>
+                    <div class="controls">
+                        ${points.map(p => `<button class="btn-add" onclick="add(${i}, ${p})">+${p}</button>`).join('')}
+                        <button class="btn-warn" onclick="warning(${i})">Нарушения: ${game.warns[i]}</button>
+                    </div>
+                </div>
+            `;
+        });
+        document.getElementById('total-val').innerText = total;
+        localStorage.setItem('eclab_fix_v1', JSON.stringify(game));
+    }
+
+    function upd(key, i, val) { game[key][i] = val; draw(); }
+    function add(i, p) { game.scores[i] += p; draw(); }
+    function warning(i) {
+        game.warns[i]++;
+        if(game.warns[i] >= 2) game.scores[i] -= 20;
         draw();
-    </script>
-</body>
-</html>
+    }
+
+    function finish() {
+        // Проверка наличия библиотеки перед запуском
+        if (typeof confetti === "function") {
+            confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 } });
+        }
+        const list = document.getElementById('res-list');
+        const sorted = game.teams.map((name, i) => ({ name, score: game.scores[i] }))
+                                 .sort((a, b) => b.score - a.score);
+        
+        list.innerHTML = sorted.map((t, i) => {
+            let m = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : '•'));
+            return `<div class="res-row"><span>${m} ${t.name}</span> <b>${t.score}</b></div>`;
+        }).join('');
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function clearAll() { if(confirm("Сбросить?")) { localStorage.clear(); location.reload(); } }
+    
+    // Запуск отрисовки
+    draw();
+</script>
