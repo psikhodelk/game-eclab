@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcLab 2.0 Викторина</title>
+    <script src="https://cdn.jsdelivr.net"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            background: linear-gradient(90deg, #90ee90, #00ced1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 3rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .teams-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            max-width: 1200px;
+        }
+
+        .team-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 300px;
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .team-name-input {
+            width: 100%;
+            border: none;
+            border-bottom: 2px solid #ddd;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            outline: none;
+        }
+
+        .members-count {
+            width: 100%;
+            border: none;
+            color: #666;
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        .score-display {
+            font-size: 2.5rem;
+            text-align: center;
+            color: #2c3e50;
+            margin: 15px 0;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        .btn-plus { background-color: #e3f9e5; color: #2e7d32; }
+        .btn-warn { background-color: #fff3e0; color: #ef6c00; grid-column: span 3; }
+
+        .add-team-btn {
+            background: #90ee90;
+            color: white;
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 40px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .results-btn {
+            background: linear-gradient(90deg, #00ced1, #90ee90);
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            border-radius: 30px;
+            margin-top: 20px;
+        }
+
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .ranking-item {
+            font-size: 1.5rem;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>EcLab 2.0 Викторина</h1>
+
+    <div class="teams-container" id="teamsContainer">
+        <!-- Команды добавятся здесь -->
+    </div>
+
+    <button class="add-team-btn" id="addTeamBtn" onclick="addTeam()">+</button>
+
+    <button class="results-btn" onclick="showResults()">ПОДВЕСТИ ИТОГИ</button>
+
+    <div id="modal">
+        <div class="modal-content">
+            <h2>🏆 Итоговый рейтинг</h2>
+            <div id="rankingList"></div>
+            <button onclick="document.getElementById('modal').style.display='none'" style="margin-top:20px; background:#eee;">Закрыть</button>
+        </div>
+    </div>
+
+    <script>
+        let teamCount = 0;
+        const maxTeams = 6;
+
+        function addTeam() {
+            if (teamCount >= maxTeams) return;
+            teamCount++;
+
+            const container = document.getElementById('teamsContainer');
+            const card = document.createElement('div');
+            card.className = 'team-card';
+            card.id = `team-${teamCount}`;
+            card.innerHTML = `
+                <input type="text" class="team-name-input" placeholder="Название команды ${teamCount}">
+                <input type="text" class="members-count" placeholder="Кол-во участников...">
+                <div class="score-display" id="score-${teamCount}">0</div>
+                <div class="buttons-grid">
+                    <button class="btn-plus" onclick="updateScore(${teamCount}, 10)">+10</button>
+                    <button class="btn-plus" onclick="updateScore(${teamCount}, 20)">+20</button>
+                    <button class="btn-plus" onclick="updateScore(${teamCount}, 30)">+30</button>
+                    <button class="btn-plus" onclick="updateScore(${teamCount}, 40)">+40</button>
+                    <button class="btn-plus" onclick="updateScore(${teamCount}, 50)">+50</button>
+                    <button class="btn-warn" onclick="addWarning(${teamCount})">Предупреждение (⚠ <span id="warn-count-${teamCount}">0</span>)</button>
+                </div>
+            `;
+            container.appendChild(card);
+
+            if (teamCount === maxTeams) {
+                document.getElementById('addTeamBtn').style.display = 'none';
+            }
+        }
+
+        function updateScore(id, points) {
+            const el = document.getElementById(`score-${id}`);
+            el.innerText = parseInt(el.innerText) + points;
+        }
+
+        function addWarning(id) {
+            const warnEl = document.getElementById(`warn-count-${id}`);
+            let warnings = parseInt(warnEl.innerText) + 1;
+            warnEl.innerText = warnings;
+            
+            if (warnings > 1) {
+                updateScore(id, -20);
+                alert('Повторное предупреждение! Штраф -20 баллов.');
+            }
+        }
+
+        function showResults() {
+            const teams = [];
+            for (let i = 1; i <= teamCount; i++) {
+                const name = document.querySelector(`#team-${i} .team-name-input`).value || `Команда ${i}`;
+                const score = parseInt(document.getElementById(`score-${i}`).innerText);
+                teams.push({ name, score });
+            }
+
+            teams.sort((a, b) => b.score - a.score);
+
+            const list = document.getElementById('rankingList');
+            list.innerHTML = '';
+            const medals = ['🥇', '🥈', '🥉', '👤', '👤', '👤'];
+
+            teams.forEach((team, index) => {
+                list.innerHTML += `
+                    <div class="ranking-item">
+                        <span>${medals[index] || '👤'} ${team.name}</span>
+                        <b>${team.score}</b>
+                    </div>
+                `;
+            });
+
+            document.getElementById('modal').style.display = 'flex';
+            
+            // Фейерверк
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+
+        // Инициализация двух команд
+        addTeam();
+        addTeam();
+    </script>
+</body>
+</html>
