@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>EcLab 2.0 | Викторина</title>
-    <!-- Исправленный CDN для конфетти -->
-    <script src="https://cdn.jsdelivr.net"></script>
+    <!-- Подключаем рабочую библиотеку конфетти -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <style>
         body {
             background-color: #000000 !important;
@@ -54,7 +54,6 @@
         .btn-add {
             background: #374151; color: white; border: none;
             padding: 12px 0; border-radius: 8px; font-weight: bold; cursor: pointer;
-            transition: 0.2s;
         }
         .btn-add:hover { background: #4ade80; color: black; }
 
@@ -63,7 +62,6 @@
             background: #7f1d1d; color: white; border: none;
             padding: 10px; border-radius: 10px; cursor: pointer;
         }
-        .btn-warn:hover { background: #b91c1c; }
 
         .btn-finish {
             background: linear-gradient(90deg, #4ade80, #38bdf8);
@@ -73,7 +71,7 @@
 
         #modal {
             display: none; position: fixed; inset: 0; 
-            background: rgba(0,0,0,0.9); z-index: 9999;
+            background: rgba(0,0,0,0.95); z-index: 9999;
             justify-content: center; align-items: center;
         }
         .modal-content {
@@ -94,25 +92,25 @@
     <div class="grid" id="main-grid"></div>
 
     <button class="btn-finish" onclick="finish()">ИТОГИ ИГРЫ</button>
-    <div style="margin-top:20px; color:#4b5563; cursor:pointer; font-size: 14px;" onclick="clearAll()">Сбросить всё данные</div>
+    <div style="margin-top:20px; color:#4b5563; cursor:pointer;" onclick="clearAll()">Сбросить всё</div>
 
     <div id="modal">
         <div class="modal-content">
-            <h2 style="color:#4ade80; font-size: 32px; margin-top: 0;">Результаты</h2>
+            <h2 style="color:#4ade80">Результаты</h2>
             <div id="res-list"></div>
-            <button class="btn-finish" style="font-size:18px; padding:15px 30px; margin-top: 20px;" onclick="document.getElementById('modal').style.display='none'">Закрыть</button>
+            <button class="btn-finish" style="font-size:18px; padding:10px 20px;" onclick="document.getElementById('modal').style.display='none'">Закрыть</button>
         </div>
     </div>
 
     <script>
-        // Исправлено: добавлены значения баллов
-        const points = [10, 20, 30, 40, 50];
+        // Заполнили массив баллов
+        const points = [10, 20, 30, 40, 50]; 
         
         let game = JSON.parse(localStorage.getItem('eclab_fix_v1')) || {
             teams: ["Команда 1", "Команда 2", "Команда 3", "Команда 4", "Команда 5", "Команда 6"],
-            scores: [0,0,0,0,0,0],
-            warns: [0,0,0,0,0,0],
-            members: [0,0,0,0,0,0]
+            scores: [0, 0, 0, 0, 0, 0],
+            warns: [0, 0, 0, 0, 0, 0],
+            members: [0, 0, 0, 0, 0, 0]
         };
 
         function draw() {
@@ -127,7 +125,7 @@
                         <input class="team-name" value="${name}" onchange="upd('teams', ${i}, this.value)">
                         <div style="font-size:14px; color:#94a3b8; margin-bottom:10px;">
                             Участников: <input type="number" value="${game.members[i]}" 
-                            style="width:50px; background:#000; color:#4ade80; border:1px solid #38bdf8; text-align:center; border-radius:5px;" 
+                            style="width:50px; background:#000; color:#4ade80; border:1px solid #38bdf8" 
                             onchange="upd('members', ${i}, this.value)">
                         </div>
                         <div class="score">${game.scores[i]}</div>
@@ -143,51 +141,37 @@
         }
 
         function upd(key, i, val) { 
-            game[key][i] = (key === 'members' || key === 'scores') ? parseInt(val || 0) : val; 
-            draw(); 
-        }
-        
-        function add(i, p) { 
-            game.scores[i] += p; 
+            game[key][i] = (key === 'teams') ? val : parseInt(val || 0); 
             draw(); 
         }
 
+        function add(i, p) { game.scores[i] += p; draw(); }
+
         function warning(i) {
             game.warns[i]++;
-            // Каждое второе нарушение (и далее) снимает 20 баллов
             if(game.warns[i] >= 2) game.scores[i] -= 20;
             draw();
         }
 
         function finish() {
-            // Запуск конфетти
-            confetti({
-                particleCount: 150,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#4ade80', '#38bdf8', '#ffffff']
-            });
+            // Проверяем, загружена ли библиотека конфетти
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 } });
+            }
 
             const list = document.getElementById('res-list');
-            const sorted = game.teams.map((name, i) => ({ 
-                name, 
-                score: game.scores[i] 
-            })).sort((a, b) => b.score - a.score);
+            const sorted = game.teams.map((name, i) => ({ name, score: game.scores[i] }))
+                                     .sort((a, b) => b.score - a.score);
             
             list.innerHTML = sorted.map((t, i) => {
-                let icon = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : '•'));
-                return `<div class="res-row"><span>${icon} ${t.name}</span> <b>${t.score}</b></div>`;
+                let m = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : '•'));
+                return `<div class="res-row"><span>${m} ${t.name}</span> <b>${t.score}</b></div>`;
             }).join('');
             
             document.getElementById('modal').style.display = 'flex';
         }
 
-        function clearAll() { 
-            if(confirm("Вы уверены, что хотите обнулить все результаты?")) { 
-                localStorage.removeItem('eclab_fix_v1'); 
-                location.reload(); 
-            } 
-        }
+        function clearAll() { if(confirm("Сбросить?")) { localStorage.clear(); location.reload(); } }
         
         draw();
     </script>
