@@ -6,109 +6,122 @@
     <title>EcLab 2.0 | Викторина</title>
     <style>
         :root {
-            --bg: #020617;
-            --card: rgba(30, 41, 59, 0.5);
-            --border: rgba(255, 255, 255, 0.1);
-            --accent: linear-gradient(90deg, #4ade80, #22d3ee);
-            --warn-yellow: #facc15;
+            /* Новая крутая палитра */
+            --bg: #f5f5f0; /* Бежевая подложка */
+            --card: #ffffff;
+            --border: #e2e2d5;
+            --text-dark: #2d3436;
+            --text-sub: #a0a08b;
+            --accent: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); /* Зелено-голубой градиент */
+            --accent-solid: #4ade80;
+            --warn-yellow: #f59e0b;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg) radial-gradient(circle at 50% -20%, #1e293b 0%, #020617 100%);
-            color: #f8fafc;
+            font-family: 'Inter', 'Manrope', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at top right, #e8e8df 0%, #f5f5f0 100%);
+            color: var(--text-dark);
             margin: 0; padding: 40px 20px;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Заголовок */
         .header { text-align: center; margin-bottom: 30px; }
         h1 {
-            background: var(--accent); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background: linear-gradient(90deg, #10b981, #06b6d4); /* Зелено-голубой */
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 900; margin: 0;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
-        .sub { font-size: 1.2rem; color: #64748b; letter-spacing: 5px; text-transform: uppercase; }
+        .sub { font-size: 1.1rem; color: var(--text-sub); letter-spacing: 6px; text-transform: uppercase; margin-top: 5px; }
 
         .stats {
-            background: var(--card); padding: 12px 25px; border-radius: 100px;
-            border: 1px solid var(--border); margin-bottom: 40px; font-size: 1rem;
+            background: var(--card); padding: 15px 30px; border-radius: 100px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border); margin-bottom: 40px; font-weight: 600;
         }
 
-        /* Сетка 2 колонки */
         .grid {
             display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: 25px; width: 100%; max-width: 900px;
+            gap: 25px; width: 100%; max-width: 1000px;
         }
         @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
 
         .card {
-            background: var(--card); backdrop-filter: blur(20px);
-            border-radius: 28px; padding: 25px; border: 1px solid var(--border);
-            transition: 0.3s ease; position: relative;
+            background: var(--card); border-radius: 32px; padding: 30px; 
+            border: 1px solid var(--border); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.03);
         }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
 
         .card-name {
-            background: transparent; border: none; border-bottom: 2px solid var(--border);
-            color: #fff; font-size: 1.5rem; font-weight: 800; width: 100%;
-            margin-bottom: 15px; outline: none;
+            background: transparent; border: none; border-bottom: 3px solid #f0f0e8;
+            color: var(--text-dark); font-size: 1.6rem; font-weight: 800; width: 100%;
+            margin-bottom: 20px; outline: none; transition: 0.3s;
         }
+        .card-name:focus { border-color: #06b6d4; }
 
-        .card label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .card label { font-size: 0.75rem; color: var(--text-sub); text-transform: uppercase; font-weight: 700; margin-bottom: 8px; display: block; }
 
         .card-mems {
-            background: rgba(0,0,0,0.2); border: 1px solid var(--border);
-            border-radius: 10px; color: #4ade80; padding: 8px; width: 100%; box-sizing: border-box;
-            margin-bottom: 15px; font-weight: bold; outline: none;
+            background: #f8f8f2; border: 1px solid var(--border);
+            border-radius: 12px; color: #10b981; padding: 10px; width: 100%; box-sizing: border-box;
+            margin-bottom: 20px; font-weight: 800; outline: none; font-size: 1.1rem;
         }
 
         .score {
-            font-size: 4.5rem; font-weight: 900; text-align: center;
-            background: var(--accent); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-size: 5rem; font-weight: 900; text-align: center; margin: 10px 0;
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        .btn-pts-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .btn-pts-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
         .btn-p {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            color: #fff; padding: 12px 0; border-radius: 10px; cursor: pointer; font-weight: bold;
+            background: #f1f5f9; border: none; color: #475569; padding: 14px 0;
+            border-radius: 14px; cursor: pointer; font-weight: 800; transition: 0.2s;
         }
-        .btn-p:hover { background: #fff; color: #000; }
+        .btn-p:hover { background: #06b6d4; color: white; transform: scale(1.05); }
 
         .btn-warn {
             grid-column: span 5; margin-top: 15px; cursor: pointer;
-            background: rgba(250, 204, 21, 0.05); border: 1px solid rgba(250, 204, 21, 0.2);
-            color: var(--warn-yellow); padding: 14px; border-radius: 12px;
-            font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: #fff1f2; border: 1px solid #fecdd3;
+            color: #e11d48; padding: 16px; border-radius: 16px;
+            font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;
         }
+        .btn-warn:active { transform: scale(0.98); }
 
-        /* Кнопки управления */
-        .controls { display: flex; gap: 15px; margin-top: 40px; }
+        .controls { display: flex; gap: 20px; margin-top: 50px; }
         .btn-m {
-            padding: 18px 35px; border-radius: 50px; border: none;
+            padding: 20px 40px; border-radius: 20px; border: none;
             font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
         }
-        .btn-res { background: var(--accent); color: #000; box-shadow: 0 0 20px rgba(34, 211, 238, 0.3); }
-        .btn-rst { background: transparent; color: #475569; border: 1px solid var(--border); }
+        .btn-res { background: linear-gradient(90deg, #10b981, #06b6d4); color: white; }
+        .btn-res:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-rst { background: white; color: #94a3b8; border: 1px solid var(--border); }
 
-        /* Модальное окно */
+        /* Финальное окно */
         #modal {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-            z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(10px);
+            display: none; position: fixed; inset: 0; background: rgba(245, 245, 240, 0.95);
+            z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(15px);
         }
         .m-box {
-            background: #0f172a; padding: 40px; border-radius: 35px; border: 1px solid var(--border);
-            width: 90%; max-width: 400px; text-align: center;
+            background: white; padding: 50px; border-radius: 40px; border: 1px solid var(--border);
+            width: 90%; max-width: 500px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
         }
-        .r-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border); font-size: 1.2rem; }
+        .r-row { display: flex; justify-content: space-between; padding: 20px; border-bottom: 2px solid #f5f5f0; font-size: 1.4rem; font-weight: 700; }
 
-        /* АНИМАЦИЯ ФЕЙЕРВЕРКА */
-        .particle {
-            position: fixed; width: 6px; height: 6px; border-radius: 50%;
-            pointer-events: none; z-index: 9999; animation: fly 1.5s ease-out forwards;
+        /* НОВЫЕ ХЛОПУШКИ (Confetti) */
+        .confetti {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            animation: fall linear forwards;
         }
-        @keyframes fly {
-            0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
         }
     </style>
 </head>
@@ -116,29 +129,29 @@
 
     <div class="header">
         <h1>EcLab 2.0</h1>
-        <div class="sub">Викторина</div>
+        <div class="sub">🏆 Grand Quiz</div>
     </div>
 
-    <div class="stats">Количество участников (всего): <span id="total" style="color:#4ade80; font-weight:900">0</span></div>
+    <div class="stats">Участников в зале: <span id="total" style="color:#10b981; font-weight:900">0</span></div>
 
     <div class="grid" id="grid"></div>
 
     <div class="controls">
-        <button class="btn-m" style="background:#fff" onclick="add()">+ Команда</button>
-        <button class="btn-m btn-res" onclick="finish()">Итоги</button>
-        <button class="btn-m btn-rst" onclick="reset()">Сброс</button>
+        <button class="btn-m" style="background:#fff; color:#2d3436" onclick="add()">+ Команда</button>
+        <button class="btn-m btn-res" onclick="finish()">ПОДВЕСТИ ИТОГИ</button>
+        <button class="btn-m btn-rst" onclick="reset()">СБРОС</button>
     </div>
 
     <div id="modal">
         <div class="m-box">
-            <h2 style="font-size:2rem; margin-top:0">🏆 Рейтинг</h2>
+            <h2 style="font-size:2.5rem; margin-top:0; color:#10b981">🏆 Победители</h2>
             <div id="ranks"></div>
-            <button onclick="closeM()" style="margin-top:25px; background:none; border:none; color:#444; cursor:pointer; font-weight:bold">ЗАКРЫТЬ</button>
+            <button class="btn-m btn-rst" onclick="closeM()" style="margin-top:30px">ЗАКРЫТЬ</button>
         </div>
     </div>
 
     <script>
-        let teams = JSON.parse(localStorage.getItem('eclab_final')) || {};
+        let teams = JSON.parse(localStorage.getItem('eclab_v2_data')) || {};
 
         window.onload = () => {
             const keys = Object.keys(teams);
@@ -147,7 +160,7 @@
         };
 
         function add() {
-            if(Object.keys(teams).length >= 6) return;
+            if(Object.keys(teams).length >= 8) return;
             const id = 't' + Date.now();
             teams[id] = { name: '', mems: 0, score: 0, warns: 0 };
             render(id);
@@ -160,13 +173,13 @@
             div.className = 'card';
             div.id = id;
             div.innerHTML = `
-                <input type="text" class="card-name" placeholder="Команда..." value="${t.name}" oninput="updData('${id}','name',this.value)">
-                <label>Количество участников</label>
+                <input type="text" class="card-name" placeholder="Имя команды" value="${t.name}" oninput="updData('${id}','name',this.value)">
+                <label>👥 Состав команды</label>
                 <input type="number" class="card-mems" value="${t.mems}" oninput="updData('${id}','mems',this.value); calc()">
                 <div class="score" id="s-${id}">${t.score}</div>
                 <div class="btn-pts-grid">
-                    ${[10,20,30,40,50].map(p => `<button class="btn-p" onclick="updScore('${id}',${p})">${p}</button>`).join('')}
-                    <button class="btn-warn" onclick="warn('${id}')">⚠️ Предупреждение (<span id="w-${id}">${t.warns}</span>)</button>
+                    ${[10,20,30,40,50].map(p => `<button class="btn-p" onclick="updScore('${id}',${p})">+${p}</button>`).join('')}
+                    <button class="btn-warn" onclick="warn('${id}')">⚠️ Нарушение (<span id="w-${id}">${t.warns}</span>)</button>
                 </div>
             `;
             document.getElementById('grid').appendChild(div);
@@ -183,60 +196,71 @@
         function warn(id) {
             teams[id].warns++;
             document.getElementById(`w-${id}`).innerText = teams[id].warns;
-            if(teams[id].warns > 1) {
+            if(teams[id].warns >= 2) {
                 updScore(id, -20);
                 const c = document.getElementById(id);
-                c.style.borderColor = 'red';
-                setTimeout(() => c.style.borderColor = 'rgba(255,255,255,0.1)', 500);
+                c.style.background = '#fff1f2';
+                setTimeout(() => c.style.background = '#fff', 500);
             }
             save();
         }
 
+        function save() { localStorage.setItem('eclab_v2_data', JSON.stringify(teams)); }
+
         function calc() {
             let sum = 0;
-            Object.values(teams).forEach(t => sum += (parseInt(t.mems) || 0));
+            Object.values(teams).forEach(t => sum += parseInt(t.mems || 0));
             document.getElementById('total').innerText = sum;
         }
 
-        function save() { localStorage.setItem('eclab_final', JSON.stringify(teams)); }
-
         function finish() {
-            const res = Object.values(teams).sort((a,b) => b.score - a.score);
-            const list = document.getElementById('ranks');
-            list.innerHTML = '';
-            const medals = ['🥇','🥈','🥉','🎖','🎖','🎖'];
-            res.forEach((r, i) => {
-                list.innerHTML += `<div class="r-row"><span>${medals[i]} ${r.name || '...'}</span><b>${r.score}</b></div>`;
+            const sorted = Object.values(teams).sort((a,b) => b.score - a.score);
+            let html = '';
+            sorted.forEach((t, i) => {
+                const emoji = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : '🔹'));
+                html += `<div class="r-row"><span>${emoji} ${t.name || '...'}</span> <span style="color:#06b6d4">${t.score}</span></div>`;
             });
+            document.getElementById('ranks').innerHTML = html;
             document.getElementById('modal').style.display = 'flex';
-            boom(); // Запуск фейерверка
+            startConfetti();
         }
 
-        // ГАРАНТИРОВАННЫЙ ФЕЙЕРВЕРК
-        function boom() {
-            const colors = ['#4ade80', '#22d3ee', '#facc15', '#ff4d4d', '#ffffff'];
-            for (let i = 0; i < 150; i++) {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                p.style.left = '50%';
-                p.style.top = '50%';
-                // Случайное направление разлета
-                const x = (Math.random() - 0.5) * window.innerWidth;
-                const y = (Math.random() - 0.5) * window.innerHeight;
-                p.style.setProperty('--x', `${x}px`);
-                p.style.setProperty('--y', `${y}px`);
-                document.body.appendChild(p);
-                // Удаляем частицу после анимации
-                setTimeout(() => p.remove(), 1500);
+        function startConfetti() {
+            const colors = ['#10b981', '#06b6d4', '#4ade80', '#22d3ee', '#facc15', '#fb7185'];
+            // Делаем БОЛЬШЕ и ДОЛЬШЕ (300 штук)
+            for(let i=0; i<300; i++) {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = 'confetti';
+                    
+                    // Случайный размер и форма
+                    const size = Math.random() * 15 + 10 + 'px';
+                    el.style.width = size;
+                    el.style.height = Math.random() > 0.5 ? size : (parseFloat(size)/2)+'px';
+                    el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                    
+                    el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    el.style.left = Math.random() * 100 + 'vw';
+                    
+                    // Длительность падения от 3 до 6 секунд
+                    const duration = Math.random() * 3 + 3;
+                    el.style.animationDuration = duration + 's';
+                    el.style.opacity = Math.random();
+                    
+                    document.body.appendChild(el);
+                    setTimeout(() => el.remove(), duration * 1000);
+                }, i * 15); // Задержка между вылетами для эффекта "дождя"
             }
         }
 
-        function reset() {
-            if(confirm("Сбросить всё?")) { localStorage.removeItem('eclab_final'); location.reload(); }
-        }
-
         function closeM() { document.getElementById('modal').style.display = 'none'; }
+
+        function reset() {
+            if(confirm('Сбросить все данные?')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
     </script>
 </body>
 </html>
