@@ -3,130 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcLab 2.0 | Викторина</title>
+    <title>EcLab 2.0 | Premium Quiz</title>
     <style>
         @import url('https://fonts.cdnfonts.com');
 
         :root {
-            --bg: #fdfdfb;
-            --card: #ffffff;
-            --border: #e8e8e1;
-            --accent: linear-gradient(90deg, #10b981, #06b6d4);
-            --text-main: #1e293b;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --border: #334155;
+            --accent: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            --accent-green: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            --accent-red: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+            --text-main: #f8fafc;
             --text-sub: #94a3b8;
         }
 
-        * {
-            font-family: 'Multiround Pro', sans-serif;
-            box-sizing: border-box;
-        }
+        * { font-family: 'Multiround Pro', sans-serif; box-sizing: border-box; }
 
         body {
             background: var(--bg);
-            background-image: radial-gradient(circle at 50% 0%, #f5f5ee 0%, #fdfdfb 100%);
+            background-image: radial-gradient(circle at top right, #1e293b 0%, #0f172a 100%);
             color: var(--text-main);
             margin: 0; padding: 40px 20px;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
 
-        .header { text-align: center; margin-bottom: 30px; }
+        .header { text-align: center; margin-bottom: 40px; }
         h1 {
             background: var(--accent); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 900; margin: 0;
+            font-size: clamp(3rem, 10vw, 5rem); font-weight: 900; margin: 0;
+            filter: drop-shadow(0 0 20px rgba(79, 172, 254, 0.4));
         }
-        .sub { font-size: 1.2rem; color: var(--text-sub); letter-spacing: 5px; text-transform: uppercase; }
+        .sub { font-size: 1.2rem; color: #38bdf8; letter-spacing: 8px; text-transform: uppercase; font-weight: 800; }
 
         .stats {
-            background: var(--card); padding: 12px 30px; border-radius: 100px;
+            background: rgba(30, 41, 59, 0.7); padding: 15px 40px; border-radius: 100px;
             border: 1px solid var(--border); margin-bottom: 40px; font-weight: 700;
+            backdrop-filter: blur(10px); box-shadow: 0 0 30px rgba(0,0,0,0.3);
         }
 
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; width: 100%; max-width: 900px; }
-        @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; width: 100%; max-width: 1000px; }
+        @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
 
         .card {
-            background: var(--card); border-radius: 32px; padding: 25px; border: 1px solid var(--border);
-            position: relative; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            background: var(--card); border-radius: 40px; padding: 30px; border: 1px solid var(--border);
+            position: relative; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
+        .card:hover { transform: translateY(-10px); border-color: #4facfe; box-shadow: 0 0 30px rgba(79, 172, 254, 0.2); }
 
         .card-name {
-            background: transparent; border: none; border-bottom: 2px solid #f1f1ea;
-            color: var(--text-main); font-size: 1.5rem; font-weight: 800; width: 100%; margin-bottom: 15px; outline: none;
+            background: transparent; border: none; border-bottom: 3px solid var(--border);
+            color: #fff; font-size: 1.8rem; font-weight: 900; width: 100%; margin-bottom: 20px; outline: none;
+            transition: 0.3s;
         }
+        .card-name:focus { border-bottom-color: #00f2fe; }
 
-        .card label { font-size: 0.75rem; color: var(--text-sub); text-transform: uppercase; display: block; font-weight: 800; }
+        .card label { font-size: 0.8rem; color: var(--text-sub); text-transform: uppercase; margin-bottom: 8px; display: block; font-weight: 800; }
 
         .card-mems {
-            background: #f8f8f2; border: 1px solid var(--border); border-radius: 12px;
-            color: #10b981; padding: 10px; width: 100%; margin-bottom: 15px; font-weight: bold; outline: none;
+            background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border); border-radius: 15px;
+            color: #10b981; padding: 12px; width: 100%; margin-bottom: 20px; font-weight: 900; outline: none; font-size: 1.2rem;
         }
 
-        .score-box { position: relative; text-align: center; }
+        .score-box { position: relative; margin: 15px 0; }
         .score {
-            font-size: 4.5rem; font-weight: 900; background: var(--accent); 
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 10px 0;
+            font-size: 5rem; font-weight: 900; background: var(--accent); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center;
         }
-        .warn-indicator { position: absolute; top: 0; right: 10%; font-size: 2rem; }
+        .warn-dot { position: absolute; top: 0; right: 5%; font-size: 2.5rem; filter: drop-shadow(0 0 10px red); }
 
-        .btn-pts-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .btn-pts-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
         .btn-p {
-            background: #f1f5f9; border: none; color: #475569; padding: 12px 0;
-            border-radius: 12px; cursor: pointer; font-weight: 800; transition: 0.2s;
+            background: #334155; border: none; color: #fff; padding: 15px 0;
+            border-radius: 16px; cursor: pointer; font-weight: 900; transition: 0.3s; font-size: 1rem;
         }
-        .btn-p:hover { background: #06b6d4; color: #fff; }
+        .btn-p:hover { background: var(--accent); transform: scale(1.1); box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4); }
 
         .btn-warn {
-            grid-column: span 5; margin-top: 15px; cursor: pointer;
-            background: #fff1f2; border: 1px solid #fecdd3; color: #e11d48;
-            padding: 14px; border-radius: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px;
+            grid-column: span 5; margin-top: 20px; cursor: pointer;
+            background: rgba(239, 68, 68, 0.1); border: 2px solid #ef4444; color: #ef4444;
+            padding: 16px; border-radius: 20px; font-weight: 900; text-transform: uppercase; transition: 0.3s;
         }
+        .btn-warn.active { background: #ef4444; color: #fff; box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
 
-        .controls { display: flex; gap: 15px; margin-top: 40px; }
+        .controls { display: flex; gap: 20px; margin-top: 50px; flex-wrap: wrap; justify-content: center; }
         .btn-m {
-            padding: 18px 35px; border-radius: 50px; border: none; font-weight: 800;
-            cursor: pointer; text-transform: uppercase; font-size: 0.9rem;
+            padding: 20px 45px; border-radius: 100px; border: none; font-weight: 900;
+            cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
         }
-        .btn-res { background: var(--accent); color: #fff; }
-        .btn-rst { background: #fff; color: var(--text-sub); border: 1px solid var(--border); }
+        .btn-add { background: var(--accent-green); color: #fff; }
+        .btn-res { background: var(--accent); color: #fff; box-shadow: 0 10px 25px rgba(79, 172, 254, 0.3); }
+        .btn-rst { background: transparent; color: var(--text-sub); border: 2px solid var(--border); }
 
         #modal {
-            display: none; position: fixed; inset: 0; background: rgba(253, 253, 251, 0.95);
-            z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(10px);
+            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9);
+            z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(15px);
         }
-        .m-box { background: #fff; padding: 40px; border-radius: 40px; border: 1px solid var(--border); width: 90%; max-width: 450px; text-align: center; }
-        .r-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 2px solid #f8f8f2; font-size: 1.3rem; font-weight: 700; }
+        .m-box { 
+            background: var(--card); padding: 50px; border-radius: 50px; border: 1px solid var(--border); 
+            width: 90%; max-width: 500px; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+        .r-row { 
+            display: flex; justify-content: space-between; padding: 20px; 
+            border-bottom: 1px solid var(--border); font-size: 1.5rem; font-weight: 800; 
+        }
 
+        .confetti { position: fixed; pointer-events: none; z-index: 9999; animation: fall linear forwards; border-radius: 2px; }
         @keyframes fall { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
-        .confetti { position: fixed; pointer-events: none; z-index: 9999; animation: fall linear forwards; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>EcLab 2.0</h1>
-        <div class="sub">Викторина</div>
+        <div class="sub">Digital Quiz System</div>
     </div>
 
-    <div class="stats">Участников (всего): <span id="total">0</span></div>
+    <div class="stats">TOTAL PLAYERS: <span id="total" style="color:#00f2fe">0</span></div>
 
     <div class="grid" id="grid"></div>
 
     <div class="controls">
-        <button class="btn-m" style="background:#fff; border: 1px solid #e2e2e2;" onclick="add()">+ Команда</button>
-        <button class="btn-m btn-res" onclick="finish()">Итоги</button>
-        <button class="btn-m btn-rst" onclick="reset()">Сброс</button>
+        <button class="btn-m btn-add" onclick="add()">+ TEAM</button>
+        <button class="btn-m btn-res" onclick="finish()">🏆 ИТОГИ</button>
+        <button class="btn-m btn-rst" onclick="reset()">RESET</button>
     </div>
 
     <div id="modal">
         <div class="m-box">
-            <h2 style="font-size:2.5rem; color:#10b981; margin-top:0">🏆 Рейтинг</h2>
+            <h2 style="font-size:3rem; background: var(--accent); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-top:0">LEADERBOARD</h2>
             <div id="ranks"></div>
-            <button class="btn-m btn-rst" onclick="closeM()" style="margin-top:25px">ЗАКРЫТЬ</button>
+            <button class="btn-m btn-rst" onclick="closeM()" style="margin-top:30px">CLOSE</button>
         </div>
     </div>
 
     <script>
-        let teams = JSON.parse(localStorage.getItem('eclab_white_final')) || {};
+        let teams = JSON.parse(localStorage.getItem('eclab_premium_v1')) || {};
 
         window.onload = () => {
             const keys = Object.keys(teams);
@@ -134,7 +147,7 @@
             else { keys.forEach(id => render(id)); calc(); }
         };
 
-        function save() { localStorage.setItem('eclab_white_final', JSON.stringify(teams)); }
+        function save() { localStorage.setItem('eclab_premium_v1', JSON.stringify(teams)); }
 
         function add() {
             if(Object.keys(teams).length >= 8) return;
@@ -149,17 +162,20 @@
             const div = document.createElement('div');
             div.className = 'card';
             div.id = id;
+            const warnText = t.warns === 0 ? "ПРЕДУПРЕЖДЕНИЕ" : "ШТРАФ (-20)";
+            const warnClass = t.warns > 0 ? "active" : "";
+            
             div.innerHTML = `
-                <input type="text" class="card-name" placeholder="Команда..." value="${t.name}" oninput="upd('${id}','name',this.value)">
-                <label>Состав</label>
+                <input type="text" class="card-name" placeholder="Team Name..." value="${t.name}" oninput="upd('${id}','name',this.value)">
+                <label>Team Size</label>
                 <input type="number" class="card-mems" min="0" value="${t.mems}" oninput="upd('${id}','mems',this.value); calc()">
                 <div class="score-box">
                     <div class="score" id="s-${id}">${t.score}</div>
-                    <div class="warn-indicator" id="w-${id}">${t.warns > 0 ? '⚠️' : ''}</div>
+                    <div class="warn-dot" id="w-${id}">${t.warns > 0 ? '⚠️' : ''}</div>
                 </div>
                 <div class="btn-pts-grid">
                     ${[10, 20, 30, 40, 50].map(p => `<button class="btn-p" onclick="addPts('${id}', ${p})">${p}</button>`).join('')}
-                    <button class="btn-warn" onclick="handleWarn('${id}')">⚠️ ШТРАФ (1 - ок, далее -20)</button>
+                    <button class="btn-warn ${warnClass}" id="bw-${id}" onclick="handleWarn('${id}')">${warnText}</button>
                 </div>
             `;
             document.getElementById('grid').appendChild(div);
@@ -178,10 +194,13 @@
 
         function handleWarn(id) {
             teams[id].warns += 1;
+            const btn = document.getElementById(`bw-${id}`);
             if (teams[id].warns > 1) {
                 teams[id].score -= 20;
                 document.getElementById(`s-${id}`).innerText = teams[id].score;
             }
+            btn.innerText = "ШТРАФ (-20)";
+            btn.classList.add('active');
             document.getElementById(`w-${id}`).innerText = '⚠️';
             save();
         }
@@ -195,27 +214,30 @@
             const sorted = Object.values(teams).sort((a, b) => b.score - a.score);
             let html = '';
             sorted.forEach((t, i) => {
-                const icon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1) + '.';
-                html += `<div class="r-row"><span>${icon} ${t.name || '---'}</span><span style="color:#06b6d4">${t.score}</span></div>`;
+                const icon = i === 0 ? '👑' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+                html += `<div class="r-row"><span>${icon} ${t.name || 'TEAM'}</span><span style="color:#00f2fe">${t.score}</span></div>`;
             });
             document.getElementById('ranks').innerHTML = html;
             document.getElementById('modal').style.display = 'flex';
-            confetti();
+            for(let i=0; i<3; i++) setTimeout(confetti, i * 500);
         }
 
         function closeM() { document.getElementById('modal').style.display = 'none'; }
-        function reset() { if(confirm('Сбросить всё?')) { localStorage.clear(); location.reload(); } }
+        function reset() { if(confirm('WIPE ALL DATA?')) { localStorage.clear(); location.reload(); } }
 
         function confetti() {
-            for(let i=0; i<50; i++) {
+            const colors = ['#00f2fe', '#4facfe', '#10b981', '#34d399', '#ef4444', '#fbbf24'];
+            for(let i=0; i<150; i++) {
                 const c = document.createElement('div');
                 c.className = 'confetti';
                 c.style.left = Math.random()*100+'vw';
-                c.style.background = ['#10b981','#06b6d4','#fbbf24'][Math.floor(Math.random()*3)];
-                c.style.width = c.style.height = '8px';
-                c.style.animationDuration = (Math.random()*2+2)+'s';
+                c.style.background = colors[Math.floor(Math.random()*colors.length)];
+                c.style.width = Math.random()*12+4+'px';
+                c.style.height = Math.random()*12+4+'px';
+                c.style.animationDuration = (Math.random()*3+2)+'s';
+                c.style.transform = `rotate(${Math.random()*360}deg)`;
                 document.body.appendChild(c);
-                setTimeout(()=>c.remove(), 4000);
+                setTimeout(()=>c.remove(), 5000);
             }
         }
     </script>
