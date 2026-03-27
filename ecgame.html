@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcLab 2.0 | Premium Quiz</title>
+    <title>EcLab 2.0 | Викторина</title>
     <style>
         @import url('https://fonts.cdnfonts.com');
 
@@ -13,7 +13,6 @@
             --border: #334155;
             --accent: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
             --accent-green: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-            --accent-red: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
         }
@@ -26,20 +25,21 @@
             color: var(--text-main);
             margin: 0; padding: 40px 20px;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .header { text-align: center; margin-bottom: 40px; }
         h1 {
             background: var(--accent); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             font-size: clamp(3rem, 10vw, 5rem); font-weight: 900; margin: 0;
-            filter: drop-shadow(0 0 20px rgba(79, 172, 254, 0.4));
+            filter: drop-shadow(0 0 15px rgba(79, 172, 254, 0.3));
         }
-        .sub { font-size: 1.2rem; color: #38bdf8; letter-spacing: 8px; text-transform: uppercase; font-weight: 800; }
+        .sub { font-size: 1.2rem; color: #38bdf8; letter-spacing: 6px; text-transform: uppercase; font-weight: 800; }
 
         .stats {
-            background: rgba(30, 41, 59, 0.7); padding: 15px 40px; border-radius: 100px;
+            background: rgba(30, 41, 59, 0.8); padding: 15px 40px; border-radius: 100px;
             border: 1px solid var(--border); margin-bottom: 40px; font-weight: 700;
-            backdrop-filter: blur(10px); box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; width: 100%; max-width: 1000px; }
@@ -47,99 +47,100 @@
 
         .card {
             background: var(--card); border-radius: 40px; padding: 30px; border: 1px solid var(--border);
-            position: relative; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            position: relative; transition: 0.3s ease; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
-        .card:hover { transform: translateY(-10px); border-color: #4facfe; box-shadow: 0 0 30px rgba(79, 172, 254, 0.2); }
+        .card:hover { border-color: #4facfe; transform: translateY(-5px); }
 
         .card-name {
-            background: transparent; border: none; border-bottom: 3px solid var(--border);
-            color: #fff; font-size: 1.8rem; font-weight: 900; width: 100%; margin-bottom: 20px; outline: none;
-            transition: 0.3s;
+            background: transparent; border: none; border-bottom: 2px solid var(--border);
+            color: #fff; font-size: 1.8rem; font-weight: 800; width: 100%; margin-bottom: 20px; outline: none;
         }
-        .card-name:focus { border-bottom-color: #00f2fe; }
 
-        .card label { font-size: 0.8rem; color: var(--text-sub); text-transform: uppercase; margin-bottom: 8px; display: block; font-weight: 800; }
+        .card label { font-size: 0.75rem; color: var(--text-sub); text-transform: uppercase; margin-bottom: 5px; display: block; font-weight: 800; }
 
         .card-mems {
             background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border); border-radius: 15px;
             color: #10b981; padding: 12px; width: 100%; margin-bottom: 20px; font-weight: 900; outline: none; font-size: 1.2rem;
         }
 
-        .score-box { position: relative; margin: 15px 0; }
+        .score-box { position: relative; margin: 10px 0; }
         .score {
             font-size: 5rem; font-weight: 900; background: var(--accent); 
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center;
         }
-        .warn-dot { position: absolute; top: 0; right: 5%; font-size: 2.5rem; filter: drop-shadow(0 0 10px red); }
+        .warn-dot { position: absolute; top: 0; right: 10%; font-size: 2.5rem; filter: drop-shadow(0 0 10px #ef4444); }
 
         .btn-pts-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
         .btn-p {
             background: #334155; border: none; color: #fff; padding: 15px 0;
-            border-radius: 16px; cursor: pointer; font-weight: 900; transition: 0.3s; font-size: 1rem;
+            border-radius: 16px; cursor: pointer; font-weight: 900; transition: 0.2s;
         }
-        .btn-p:hover { background: var(--accent); transform: scale(1.1); box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4); }
+        .btn-p:hover { background: var(--accent); transform: translateY(-2px); }
 
         .btn-warn {
             grid-column: span 5; margin-top: 20px; cursor: pointer;
-            background: rgba(239, 68, 68, 0.1); border: 2px solid #ef4444; color: #ef4444;
+            background: transparent; border: 2px solid #ef4444; color: #ef4444;
             padding: 16px; border-radius: 20px; font-weight: 900; text-transform: uppercase; transition: 0.3s;
         }
-        .btn-warn.active { background: #ef4444; color: #fff; box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+        .btn-warn.active { background: #ef4444; color: #fff; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
 
         .controls { display: flex; gap: 20px; margin-top: 50px; flex-wrap: wrap; justify-content: center; }
         .btn-m {
             padding: 20px 45px; border-radius: 100px; border: none; font-weight: 900;
-            cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
+            cursor: pointer; text-transform: uppercase; transition: 0.3s;
         }
         .btn-add { background: var(--accent-green); color: #fff; }
-        .btn-res { background: var(--accent); color: #fff; box-shadow: 0 10px 25px rgba(79, 172, 254, 0.3); }
+        .btn-res { background: var(--accent); color: #fff; }
         .btn-rst { background: transparent; color: var(--text-sub); border: 2px solid var(--border); }
 
         #modal {
-            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9);
+            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95);
             z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(15px);
         }
-        .m-box { 
-            background: var(--card); padding: 50px; border-radius: 50px; border: 1px solid var(--border); 
-            width: 90%; max-width: 500px; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.5);
-        }
-        .r-row { 
-            display: flex; justify-content: space-between; padding: 20px; 
-            border-bottom: 1px solid var(--border); font-size: 1.5rem; font-weight: 800; 
-        }
+        .m-box { background: var(--card); padding: 40px; border-radius: 40px; border: 1px solid var(--border); width: 90%; max-width: 450px; text-align: center; }
+        .r-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border); font-size: 1.4rem; font-weight: 800; }
 
-        .confetti { position: fixed; pointer-events: none; z-index: 9999; animation: fall linear forwards; border-radius: 2px; }
-        @keyframes fall { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+        /* Реалистичное конфетти */
+        .confetti {
+            position: fixed; pointer-events: none; z-index: 9999;
+            animation: fall-and-spin linear forwards;
+        }
+        @keyframes fall-and-spin {
+            0% { transform: translateY(-10vh) rotate(0deg) translateX(0); opacity: 1; }
+            25% { transform: translateY(20vh) rotate(90deg) translateX(20px); }
+            50% { transform: translateY(50vh) rotate(180deg) translateX(-20px); }
+            75% { transform: translateY(80vh) rotate(270deg) translateX(20px); }
+            100% { transform: translateY(110vh) rotate(360deg) translateX(0); opacity: 0; }
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>EcLab 2.0</h1>
-        <div class="sub">Digital Quiz System</div>
+        <div class="sub">Система контроля баллов</div>
     </div>
 
-    <div class="stats">TOTAL PLAYERS: <span id="total" style="color:#00f2fe">0</span></div>
+    <div class="stats">ВСЕГО УЧАСТНИКОВ: <span id="total" style="color:#00f2fe">0</span></div>
 
     <div class="grid" id="grid"></div>
 
     <div class="controls">
-        <button class="btn-m btn-add" onclick="add()">+ TEAM</button>
+        <button class="btn-m btn-add" onclick="add()">+ КОМАНДА</button>
         <button class="btn-m btn-res" onclick="finish()">🏆 ИТОГИ</button>
-        <button class="btn-m btn-rst" onclick="reset()">RESET</button>
+        <button class="btn-m btn-rst" onclick="reset()">СБРОС</button>
     </div>
 
     <div id="modal">
         <div class="m-box">
-            <h2 style="font-size:3rem; background: var(--accent); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-top:0">LEADERBOARD</h2>
+            <h2 style="font-size:2.5rem; color:#00f2fe; margin-top:0">РЕЙТИНГ</h2>
             <div id="ranks"></div>
-            <button class="btn-m btn-rst" onclick="closeM()" style="margin-top:30px">CLOSE</button>
+            <button class="btn-m btn-rst" onclick="closeM()" style="margin-top:30px">ЗАКРЫТЬ</button>
         </div>
     </div>
 
     <script>
-        let teams = JSON.parse(localStorage.getItem('eclab_premium_v1')) || {};
+        let teams = JSON.parse(localStorage.getItem('eclab_final_v2')) || {};
 
         window.onload = () => {
             const keys = Object.keys(teams);
@@ -147,7 +148,7 @@
             else { keys.forEach(id => render(id)); calc(); }
         };
 
-        function save() { localStorage.setItem('eclab_premium_v1', JSON.stringify(teams)); }
+        function save() { localStorage.setItem('eclab_final_v2', JSON.stringify(teams)); }
 
         function add() {
             if(Object.keys(teams).length >= 8) return;
@@ -162,19 +163,19 @@
             const div = document.createElement('div');
             div.className = 'card';
             div.id = id;
-            const warnText = t.warns === 0 ? "ПРЕДУПРЕЖДЕНИЕ" : "ШТРАФ (-20)";
+            const warnText = t.warns === 0 ? "ПРЕДУПРЕЖДЕНИЕ" : "ШТРАФ (-20 БАЛЛОВ)";
             const warnClass = t.warns > 0 ? "active" : "";
             
             div.innerHTML = `
-                <input type="text" class="card-name" placeholder="Team Name..." value="${t.name}" oninput="upd('${id}','name',this.value)">
-                <label>Team Size</label>
+                <input type="text" class="card-name" placeholder="Название команды..." value="${t.name}" oninput="upd('${id}','name',this.value)">
+                <label>Количество человек</label>
                 <input type="number" class="card-mems" min="0" value="${t.mems}" oninput="upd('${id}','mems',this.value); calc()">
                 <div class="score-box">
                     <div class="score" id="s-${id}">${t.score}</div>
                     <div class="warn-dot" id="w-${id}">${t.warns > 0 ? '⚠️' : ''}</div>
                 </div>
                 <div class="btn-pts-grid">
-                    ${[10, 20, 30, 40, 50].map(p => `<button class="btn-p" onclick="addPts('${id}', ${p})">${p}</button>`).join('')}
+                    ${[10, 20, 30, 40, 50].map(p => `<button class="btn-p" onclick="addPts('${id}', ${p})">+${p}</button>`).join('')}
                     <button class="btn-warn ${warnClass}" id="bw-${id}" onclick="handleWarn('${id}')">${warnText}</button>
                 </div>
             `;
@@ -199,7 +200,7 @@
                 teams[id].score -= 20;
                 document.getElementById(`s-${id}`).innerText = teams[id].score;
             }
-            btn.innerText = "ШТРАФ (-20)";
+            btn.innerText = "ШТРАФ (-20 БАЛЛОВ)";
             btn.classList.add('active');
             document.getElementById(`w-${id}`).innerText = '⚠️';
             save();
@@ -214,28 +215,30 @@
             const sorted = Object.values(teams).sort((a, b) => b.score - a.score);
             let html = '';
             sorted.forEach((t, i) => {
-                const icon = i === 0 ? '👑' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
-                html += `<div class="r-row"><span>${icon} ${t.name || 'TEAM'}</span><span style="color:#00f2fe">${t.score}</span></div>`;
+                const icon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+                html += `<div class="r-row"><span>${icon} ${t.name || 'Без названия'}</span><span style="color:#00f2fe">${t.score}</span></div>`;
             });
             document.getElementById('ranks').innerHTML = html;
             document.getElementById('modal').style.display = 'flex';
-            for(let i=0; i<3; i++) setTimeout(confetti, i * 500);
+            spawnConfetti(200);
         }
 
         function closeM() { document.getElementById('modal').style.display = 'none'; }
-        function reset() { if(confirm('WIPE ALL DATA?')) { localStorage.clear(); location.reload(); } }
+        function reset() { if(confirm('Удалить все данные?')) { localStorage.clear(); location.reload(); } }
 
-        function confetti() {
-            const colors = ['#00f2fe', '#4facfe', '#10b981', '#34d399', '#ef4444', '#fbbf24'];
-            for(let i=0; i<150; i++) {
+        function spawnConfetti(count) {
+            const colors = ['#00f2fe', '#4facfe', '#10b981', '#fbbf24', '#ef4444', '#fff'];
+            for(let i=0; i<count; i++) {
                 const c = document.createElement('div');
                 c.className = 'confetti';
                 c.style.left = Math.random()*100+'vw';
                 c.style.background = colors[Math.floor(Math.random()*colors.length)];
-                c.style.width = Math.random()*12+4+'px';
-                c.style.height = Math.random()*12+4+'px';
+                // Разная форма: квадраты и полоски
+                const isStrip = Math.random() > 0.5;
+                c.style.width = isStrip ? (Math.random()*15+5)+'px' : (Math.random()*8+4)+'px';
+                c.style.height = (Math.random()*10+5)+'px';
                 c.style.animationDuration = (Math.random()*3+2)+'s';
-                c.style.transform = `rotate(${Math.random()*360}deg)`;
+                c.style.animationDelay = (Math.random()*2)+'s';
                 document.body.appendChild(c);
                 setTimeout(()=>c.remove(), 5000);
             }
