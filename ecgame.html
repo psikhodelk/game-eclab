@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcLab 2.0 | Викторина</title>
     <style>
-        /* Подключение шрифта Multiround Pro */
         @import url('https://fonts.cdnfonts.com');
 
         :root {
@@ -18,7 +17,6 @@
         }
 
         * {
-            /* Применяем шрифт ко всем элементам без исключения */
             font-family: 'Multiround Pro', sans-serif;
             box-sizing: border-box;
         }
@@ -36,7 +34,6 @@
             overflow-x: hidden;
         }
 
-        /* Заголовки */
         .header { text-align: center; margin-bottom: 30px; }
         h1 {
             background: var(--accent); 
@@ -81,6 +78,7 @@
             border: 1px solid var(--border); 
             transition: 0.3s ease;
             box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            position: relative;
         }
 
         .card-name {
@@ -183,7 +181,6 @@
         }
         .r-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 2px solid #f8f8f2; font-size: 1.3rem; font-weight: 700; }
 
-        /* ХЛОПУШКИ */
         .confetti {
             position: fixed; pointer-events: none; z-index: 9999;
             animation: fall linear forwards;
@@ -191,6 +188,12 @@
         @keyframes fall {
             0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
             100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+
+        .btn-del {
+            position: absolute; top: 15px; right: 15px;
+            background: #f1f5f9; border: none; width: 24px; height: 24px;
+            border-radius: 50%; color: #94a3b8; cursor: pointer; font-size: 12px;
         }
     </style>
 </head>
@@ -201,7 +204,7 @@
         <div class="sub">Викторина</div>
     </div>
 
-    <div class="stats">Количество участников (всего): <span id="total" style="color:#10b981; font-weight:900">0</span></div>
+    <div class="stats">Участников (всего): <span id="total" style="color:#10b981; font-weight:900">0</span></div>
 
     <div class="grid" id="grid"></div>
 
@@ -224,9 +227,17 @@
 
         window.onload = () => {
             const keys = Object.keys(teams);
-            if(keys.length === 0) { add(); add(); } 
-            else { keys.forEach(id => render(id)); calc(); }
+            if(keys.length === 0) { 
+                add(); add(); 
+            } else { 
+                keys.forEach(id => render(id)); 
+                calc(); 
+            }
         };
+
+        function save() {
+            localStorage.setItem('eclab_white_final', JSON.stringify(teams));
+        }
 
         function add() {
             if(Object.keys(teams).length >= 8) return;
@@ -238,61 +249,67 @@
 
         function render(id) {
             const t = teams[id];
+            const grid = document.getElementById('grid');
             const div = document.createElement('div');
             div.className = 'card';
             div.id = id;
             div.innerHTML = `
-                <input type="text" class="card-name" placeholder="Команда..." value="${t.name}" oninput="updData('${id}','name',this.value)">
-                <label>Состав команды</label>
-                <input type="number" class="card-mems" min="0" value="${t.mems}" oninput="validateMems(this, '${id}')">
+                <button class="btn-del" onclick="remove('${id}')">✕</button>
+                <input type="text" class="card-name" placeholder="Название..." value="${t.name}" oninput="updData('${id}','name',this.value)">
+                <label>Состав (чел.)</label>
+                <input type="number" class="card-mems" min="0" value="${t.mems}" oninput="updData('${id}','mems',this.value); calc()">
                 <div class="score" id="s-${id}">${t.score}</div>
                 <div class="btn-pts-grid">
-                    ${[10,20,30,40,50].map(p => `<button class="btn-p" onclick="updScore('${id}',${p})">+${p}</button>`).join('')}
-                    <button class="btn-warn" onclick="warn('${id}')">⚠️ Нарушение (<span id="w-${id}">${t.warns}</span>)</button>
+                    <button class="btn-p" onclick="addPts('${id}', 1)">+1</button>
+                    <button class="btn-p" onclick="addPts('${id}', 2)">+2</button>
+                    <button class="btn-p" onclick="addPts('${id}', 3)">+3</button>
+                    <button class="btn-p" onclick="addPts('${id}', 5)">+5</button>
+                    <button class="btn-p" onclick="addPts('${id}', 10)">+10</button>
+                    <button class="btn-warn" onclick="warn('${id}')">⚠️ ШТРАФ (-10)</button>
                 </div>
             `;
-            document.getElementById('grid').appendChild(div);
+            grid.appendChild(div);
         }
 
-        function validateMems(input, id) {
-            let val = parseInt(input.value);
-            if (isNaN(val) || val < 0) val = 0;
-            input.value = val;
-            updData(id, 'mems', val);
-            calc();
+        function remove(id) {
+            if(confirm('Удалить команду?')) {
+                delete teams[id];
+                document.getElementById(id).remove();
+                save();
+                calc();
+            }
         }
 
-        function updData(id, f, v) { teams[id][f] = v; save(); }
+        function updData(id, key, val) {
+            teams[id][key] = key === 'mems' ? (parseInt(val) || 0) : val;
+            save();
+        }
 
-        function updScore(id, v) {
-            teams[id].score += v;
+        function addPts(id, p) {
+            teams[id].score += p;
             document.getElementById(`s-${id}`).innerText = teams[id].score;
             save();
         }
 
         function warn(id) {
-            teams[id].warns++;
-            document.getElementById(`w-${id}`).innerText = teams[id].warns;
+            teams[id].score -= 10;
+            document.getElementById(`s-${id}`).innerText = teams[id].score;
             save();
         }
 
-        function save() { localStorage.setItem('eclab_white_final', JSON.stringify(teams)); calc(); }
-
         function calc() {
-            let sum = 0;
-            Object.values(teams).forEach(t => sum += (parseInt(t.mems) || 0));
-            document.getElementById('total').innerText = sum;
+            const total = Object.values(teams).reduce((s, t) => s + (t.mems || 0), 0);
+            document.getElementById('total').innerText = total;
         }
 
         function finish() {
             const sorted = Object.values(teams).sort((a, b) => b.score - a.score);
-            const box = document.getElementById('ranks');
-            box.innerHTML = sorted.map((t, i) => `
-                <div class="r-row">
-                    <span>${i + 1}. ${t.name || 'Команда'}</span>
-                    <span>${t.score}</span>
-                </div>
-            `).join('');
+            let html = '';
+            sorted.forEach((t, i) => {
+                const icon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1) + '.';
+                html += `<div class="r-row"><span>${icon} ${t.name || '---'}</span><span style="color:#06b6d4">${t.score}</span></div>`;
+            });
+            document.getElementById('ranks').innerHTML = html;
             document.getElementById('modal').style.display = 'flex';
             confetti();
         }
@@ -300,23 +317,19 @@
         function closeM() { document.getElementById('modal').style.display = 'none'; }
 
         function reset() {
-            if(confirm('Сбросить все данные?')) {
-                localStorage.removeItem('eclab_white_final');
-                location.reload();
-            }
+            if(confirm('Сбросить всё?')) { localStorage.clear(); location.reload(); }
         }
 
         function confetti() {
-            for(let i=0; i<50; i++) {
+            for(let i=0; i<60; i++) {
                 const c = document.createElement('div');
                 c.className = 'confetti';
-                c.style.left = Math.random() * 100 + 'vw';
-                c.style.background = ['#10b981','#06b6d4','#f59e0b','#ef4444'][Math.floor(Math.random()*4)];
-                c.style.width = Math.random() * 10 + 5 + 'px';
-                c.style.height = c.style.width;
-                c.style.animationDuration = Math.random() * 3 + 2 + 's';
+                c.style.left = Math.random()*100+'vw';
+                c.style.background = ['#10b981','#06b6d4','#fbbf24','#f87171'][Math.floor(Math.random()*4)];
+                c.style.width = c.style.height = (Math.random()*8+5)+'px';
+                c.style.animationDuration = (Math.random()*3+2)+'s';
                 document.body.appendChild(c);
-                setTimeout(() => c.remove(), 5000);
+                setTimeout(()=>c.remove(), 5000);
             }
         }
     </script>
