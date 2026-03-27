@@ -6,34 +6,36 @@
     <title>EcLab 2.0 | Викторина</title>
     <style>
         :root {
-            /* Возвращаем темную тему */
-            --bg: #020617;
-            --card: rgba(30, 41, 59, 0.5);
-            --border: rgba(255, 255, 255, 0.1);
-            --accent: linear-gradient(90deg, #4ade80, #22d3ee); /* Зелено-голубой */
-            --warn-yellow: #facc15;
+            --bg: #fdfdfb; /* Светло-бежевая подложка */
+            --card: #ffffff;
+            --border: #e8e8e1;
+            --accent: linear-gradient(90deg, #10b981, #06b6d4); /* Зелено-голубой */
+            --text-main: #1e293b;
+            --text-sub: #94a3b8;
         }
 
         body {
             font-family: 'Manrope', 'Inter', sans-serif;
-            background: var(--bg) radial-gradient(circle at 50% -20%, #1e293b 0%, #020617 100%);
-            color: #f8fafc;
+            background: var(--bg);
+            background-image: radial-gradient(circle at 50% 0%, #f5f5ee 0%, #fdfdfb 100%);
+            color: var(--text-main);
             margin: 0; padding: 40px 20px;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Заголовок как раньше */
+        /* Заголовки как просил */
         .header { text-align: center; margin-bottom: 30px; }
         h1 {
             background: var(--accent); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 900; margin: 0;
         }
-        .sub { font-size: 1.2rem; color: #64748b; letter-spacing: 5px; text-transform: uppercase; }
+        .sub { font-size: 1.2rem; color: var(--text-sub); letter-spacing: 5px; text-transform: uppercase; }
 
         .stats {
-            background: var(--card); padding: 12px 25px; border-radius: 100px;
-            border: 1px solid var(--border); margin-bottom: 40px; font-size: 1rem;
+            background: var(--card); padding: 12px 30px; border-radius: 100px;
+            border: 1px solid var(--border); margin-bottom: 40px; font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
         }
 
         .grid {
@@ -43,23 +45,23 @@
         @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
 
         .card {
-            background: var(--card); backdrop-filter: blur(20px);
-            border-radius: 28px; padding: 25px; border: 1px solid var(--border);
-            transition: 0.3s ease; position: relative;
+            background: var(--card); border-radius: 32px; padding: 25px; 
+            border: 1px solid var(--border); transition: 0.3s ease;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
         }
 
         .card-name {
-            background: transparent; border: none; border-bottom: 2px solid var(--border);
-            color: #fff; font-size: 1.5rem; font-weight: 800; width: 100%;
+            background: transparent; border: none; border-bottom: 2px solid #f1f1ea;
+            color: var(--text-main); font-size: 1.5rem; font-weight: 800; width: 100%;
             margin-bottom: 15px; outline: none;
         }
 
-        .card label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .card label { font-size: 0.7rem; color: var(--text-sub); text-transform: uppercase; display: block; margin-bottom: 5px; font-weight: 800; }
 
         .card-mems {
-            background: rgba(0,0,0,0.2); border: 1px solid var(--border);
-            border-radius: 10px; color: #4ade80; padding: 8px; width: 100%; box-sizing: border-box;
-            margin-bottom: 15px; font-weight: bold; outline: none;
+            background: #f8f8f2; border: 1px solid var(--border);
+            border-radius: 12px; color: #10b981; padding: 10px; width: 100%; box-sizing: border-box;
+            margin-bottom: 15px; font-weight: bold; outline: none; font-size: 1.1rem;
         }
 
         .score {
@@ -69,15 +71,15 @@
 
         .btn-pts-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
         .btn-p {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            color: #fff; padding: 12px 0; border-radius: 10px; cursor: pointer; font-weight: bold;
+            background: #f1f5f9; border: none;
+            color: #475569; padding: 12px 0; border-radius: 12px; cursor: pointer; font-weight: 800; transition: 0.2s;
         }
-        .btn-p:hover { background: #fff; color: #000; }
+        .btn-p:hover { background: #06b6d4; color: #fff; transform: scale(1.05); }
 
         .btn-warn {
             grid-column: span 5; margin-top: 15px; cursor: pointer;
-            background: rgba(250, 204, 21, 0.05); border: 1px solid rgba(250, 204, 21, 0.2);
-            color: var(--warn-yellow); padding: 14px; border-radius: 12px;
+            background: #fff1f2; border: 1px solid #fecdd3;
+            color: #e11d48; padding: 14px; border-radius: 14px;
             font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
 
@@ -86,20 +88,20 @@
             padding: 18px 35px; border-radius: 50px; border: none;
             font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase;
         }
-        .btn-res { background: var(--accent); color: #000; }
-        .btn-rst { background: transparent; color: #475569; border: 1px solid var(--border); }
+        .btn-res { background: var(--accent); color: #fff; box-shadow: 0 10px 20px rgba(6, 182, 212, 0.2); }
+        .btn-rst { background: #fff; color: var(--text-sub); border: 1px solid var(--border); }
 
         #modal {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            display: none; position: fixed; inset: 0; background: rgba(253, 253, 251, 0.95);
             z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(10px);
         }
         .m-box {
-            background: #0f172a; padding: 40px; border-radius: 35px; border: 1px solid var(--border);
-            width: 90%; max-width: 400px; text-align: center;
+            background: #fff; padding: 40px; border-radius: 40px; border: 1px solid var(--border);
+            width: 90%; max-width: 450px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.1);
         }
-        .r-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border); font-size: 1.2rem; }
+        .r-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 2px solid #f8f8f2; font-size: 1.3rem; font-weight: 700; }
 
-        /* УЛУЧШЕННЫЕ ХЛОПУШКИ */
+        /* ХЛОПУШКИ */
         .confetti {
             position: fixed; pointer-events: none; z-index: 9999;
             animation: fall linear forwards;
@@ -117,26 +119,26 @@
         <div class="sub">Викторина</div>
     </div>
 
-    <div class="stats">Количество участников (всего): <span id="total" style="color:#4ade80; font-weight:900">0</span></div>
+    <div class="stats">Количество участников (всего): <span id="total" style="color:#10b981; font-weight:900">0</span></div>
 
     <div class="grid" id="grid"></div>
 
     <div class="controls">
-        <button class="btn-m" style="background:#fff; color:#000" onclick="add()">+ Команда</button>
+        <button class="btn-m" style="background:#fff; border: 1px solid #e2e2e2;" onclick="add()">+ Команда</button>
         <button class="btn-m btn-res" onclick="finish()">Итоги</button>
         <button class="btn-m btn-rst" onclick="reset()">Сброс</button>
     </div>
 
     <div id="modal">
         <div class="m-box">
-            <h2 style="font-size:2rem; margin-top:0">🏆 Рейтинг</h2>
+            <h2 style="font-size:2.5rem; margin-top:0; color:#10b981">🏆 Рейтинг</h2>
             <div id="ranks"></div>
-            <button onclick="closeM()" style="margin-top:25px; background:none; border:none; color:#64748b; cursor:pointer; font-weight:bold">ЗАКРЫТЬ</button>
+            <button class="btn-m btn-rst" onclick="closeM()" style="margin-top:25px">ЗАКРЫТЬ</button>
         </div>
     </div>
 
     <script>
-        let teams = JSON.parse(localStorage.getItem('eclab_v2_final')) || {};
+        let teams = JSON.parse(localStorage.getItem('eclab_white_final')) || {};
 
         window.onload = () => {
             const keys = Object.keys(teams);
@@ -163,17 +165,19 @@
                 <input type="number" class="card-mems" min="0" value="${t.mems}" oninput="validateMems(this, '${id}')">
                 <div class="score" id="s-${id}">${t.score}</div>
                 <div class="btn-pts-grid">
-                    ${[10,20,30,40,50].map(p => `<button class="btn-p" onclick="updScore('${id}',${p})">${p}</button>`).join('')}
-                    <button class="btn-warn" onclick="warn('${id}')">⚠️ Предупреждение (<span id="w-${id}">${t.warns}</span>)</button>
+                    ${[10,20,30,40,50].map(p => `<button class="btn-p" onclick="updScore('${id}',${p})">+${p}</button>`).join('')}
+                    <button class="btn-warn" onclick="warn('${id}')">⚠️ Нарушение (<span id="w-${id}">${t.warns}</span>)</button>
                 </div>
             `;
             document.getElementById('grid').appendChild(div);
         }
 
-        // Защита от отрицательного количества участников
+        // Защита от отрицательных чисел
         function validateMems(input, id) {
-            if (input.value < 0) input.value = 0;
-            updData(id, 'mems', input.value);
+            let val = parseInt(input.value);
+            if (isNaN(val) || val < 0) val = 0;
+            input.value = val;
+            updData(id, 'mems', val);
             calc();
         }
 
@@ -191,13 +195,13 @@
             if(teams[id].warns >= 2) {
                 updScore(id, -20);
                 const c = document.getElementById(id);
-                c.style.borderColor = 'red';
-                setTimeout(() => c.style.borderColor = 'rgba(255,255,255,0.1)', 500);
+                c.style.boxShadow = '0 0 20px rgba(225, 29, 72, 0.2)';
+                setTimeout(() => c.style.boxShadow = '0 10px 25px -5px rgba(0,0,0,0.05)', 600);
             }
             save();
         }
 
-        function save() { localStorage.setItem('eclab_v2_final', JSON.stringify(teams)); }
+        function save() { localStorage.setItem('eclab_white_final', JSON.stringify(teams)); }
 
         function calc() {
             let sum = 0;
@@ -210,7 +214,7 @@
             let html = '';
             sorted.forEach((t, i) => {
                 const emoji = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : '🔹'));
-                html += `<div class="r-row"><span>${emoji} ${t.name || '...'}</span> <span>${t.score}</span></div>`;
+                html += `<div class="r-row"><span>${emoji} ${t.name || '...'}</span> <span style="color:#06b6d4">${t.score}</span></div>`;
             });
             document.getElementById('ranks').innerHTML = html;
             document.getElementById('modal').style.display = 'flex';
@@ -218,26 +222,27 @@
         }
 
         function startConfetti() {
-            const colors = ['#4ade80', '#22d3ee', '#facc15', '#ffffff', '#fb7185'];
-            for(let i=0; i<300; i++) {
+            const colors = ['#10b981', '#06b6d4', '#4ade80', '#22d3ee', '#facc15', '#fb7185'];
+            for(let i=0; i<350; i++) { // Ещё больше конфетти!
                 setTimeout(() => {
                     const el = document.createElement('div');
                     el.className = 'confetti';
-                    const size = Math.random() * 12 + 8 + 'px';
+                    const size = Math.random() * 14 + 10 + 'px';
                     el.style.width = size;
                     el.style.height = Math.random() > 0.5 ? size : (parseFloat(size)/2)+'px';
+                    el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
                     el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                     el.style.left = Math.random() * 100 + 'vw';
-                    const duration = Math.random() * 3 + 4;
+                    const duration = Math.random() * 3 + 4; // Падают долго
                     el.style.animationDuration = duration + 's';
                     document.body.appendChild(el);
                     setTimeout(() => el.remove(), duration * 1000);
-                }, i * 12);
+                }, i * 10);
             }
         }
 
         function closeM() { document.getElementById('modal').style.display = 'none'; }
-        function reset() { if(confirm('Сбросить всё?')) { localStorage.clear(); location.reload(); } }
+        function reset() { if(confirm('Очистить все данные?')) { localStorage.clear(); location.reload(); } }
     </script>
 </body>
 </html>
