@@ -5,18 +5,16 @@
     <title>Планшет Игрока — Бизнес-Выживалити</title>
     <style>
         :root {
-            --bg-page: #f8fafc;
+            --bg-page: #f4f5f7;
             --board-bg: #ffffff;
-            --text-black: #111827;
-            --text-muted: #64748b;
-            --accent-pink: #e11d48; /* Тот самый сочный малиново-красный из референса */
-            --accent-blue: #2563eb; /* Контрастный синий */
-            --accent-yellow: #f59e0b; /* Насыщенный желтый */
-            --line-color: #e2e8f0;
+            --text-black: #000000;
+            --accent-pink: #ff1e56;   /* Яркий малиновый из референса */
+            --accent-blue: #00b4d8;   /* Электрический синий */
+            --accent-yellow: #ffac41; /* Сочный оранжево-желтый */
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Arial Black', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-page);
             display: flex;
             justify-content: center;
@@ -27,166 +25,121 @@
             box-sizing: border-box;
         }
 
-        /* Планшет в стиле швейцарского минимализма */
+        /* Плотный журнальный дашборд */
         .player-board {
             width: 840px;
             height: 540px;
             background-color: var(--board-bg);
-            border: 1px solid var(--text-black);
-            padding: 45px;
+            border: 4px solid var(--text-black);
+            padding: 35px;
             box-sizing: border-box;
             position: relative;
-            overflow: hidden;
-            
-            /* Тонкие изящные дизайнерские линии на фоне */
-            background-image: 
-                linear-gradient(to right, var(--line-color) 1px, transparent 1px),
-                linear-gradient(to bottom, var(--line-color) 1px, transparent 1px);
-            background-size: 40px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        /* Декоративный круговой паттерн со штриховкой из референса */
-        .brand-pattern {
-            position: absolute;
-            bottom: -30px;
-            right: -30px;
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            border: 1px solid var(--accent-pink);
-            /* Эффект диагональных полос */
-            background: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 6px,
-                var(--accent-pink) 6px,
-                var(--accent-pink) 7px
-            );
-            opacity: 0.15;
-            z-index: 1;
-        }
-
-        /* Зона для карточки Сектора */
+        /* Зона для карточки Сектора — массивная, с толстым контуром */
         .sector-zone {
             background-color: #ffffff;
-            border: 1px solid var(--text-black);
+            border: 4px solid var(--text-black);
             height: 100px;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 2;
             position: relative;
-        }
-
-        /* Декоративный крестик в углу зоны, как в журнальной верстке */
-        .sector-zone::before {
-            content: '＋';
-            position: absolute;
-            top: -12px;
-            left: -6px;
-            font-size: 14px;
-            color: var(--text-black);
-            background: #ffffff;
-            padding: 0 4px;
         }
 
         .sector-zone span {
             color: var(--text-black);
-            font-size: 14px;
-            font-weight: 700;
+            font-size: 16px;
+            font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
         }
 
-        /* Контейнер шкал */
+        /* Контейнер для трех шкал */
         .tracks-container {
             display: flex;
             flex-direction: column;
-            gap: 24px;
-            margin-top: 45px;
-            z-index: 2;
-            position: relative;
+            gap: 20px;
+            margin-top: 20px;
         }
 
-        /* Строка параметра — чистая, без тяжелых обводок */
+        /* Монолитный, тяжелый блок шкалы */
         .track-row {
             display: flex;
-            align-items: center;
-            position: relative;
+            align-items: stretch;
+            border: 4px solid var(--text-black);
+            height: 64px;
+            box-sizing: border-box;
+            background: #ffffff;
         }
 
-        /* Название параметра с акцентным маркером-плашкой под текстом */
+        /* Левый глухой блок с названием на цветном фоне */
         .track-label {
-            width: 160px;
-            color: var(--text-black);
+            width: 180px;
+            color: #ffffff;
             font-size: 14px;
-            font-weight: 800;
+            font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 1px;
-            position: relative;
-            display: inline-block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+            text-align: center;
+            border-right: 4px solid var(--text-black);
         }
+        .row-capital .track-label { background-color: var(--accent-pink); }
+        .row-reputation .track-label { background-color: var(--accent-blue); }
+        .row-power .track-label { background-color: var(--accent-yellow); }
 
-        /* Изящная тонкая линия-подчеркивание названия */
-        .track-label::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 30px;
-            height: 3px;
-        }
-        .row-capital .track-label::after { background-color: var(--accent-pink); }
-        .row-reputation .track-label::after { background-color: var(--accent-blue); }
-        .row-power .track-label::after { background-color: var(--accent-yellow); }
-
-        /* Контейнер ячеек */
+        /* Пространство для ячеек со штрихованным дизайнерским фоном из референса */
         .track-values {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             flex-grow: 1;
-            padding-left: 20px;
+            padding: 0 15px;
+            /* Стильная тонкая штриховка на фоне дорожки */
+            background: repeating-linear-gradient(
+                -45deg,
+                #ffffff,
+                #ffffff 8px,
+                #f1f5f9 8px,
+                #f1f5f9 9px
+            );
         }
 
-        /* Идеальные круглые минималистичные ячейки */
+        /* Крупные, массивные ячейки-кнопки */
         .value-circle {
-            width: 36px;
-            height: 36px;
-            border: 1px solid var(--text-black);
-            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--text-black);
             background-color: #ffffff;
             color: var(--text-black);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 13px;
-            font-weight: 700;
-            transition: all 0.15s ease;
+            font-size: 16px;
+            font-weight: 900;
+            position: relative;
         }
 
-        /* Аккуратное выделение финальной десятки в стиле плашек из референса */
+        /* Последняя ячейка «10» полностью залита черным — для супер-контраста */
         .value-circle:last-child {
+            background-color: var(--text-black);
             color: #ffffff;
         }
-        .row-capital .value-circle:last-child { background-color: var(--accent-pink); border-color: var(--accent-pink); }
-        .row-reputation .value-circle:last-child { background-color: var(--accent-blue); border-color: var(--accent-blue); }
-        .row-power .value-circle:last-child { background-color: var(--accent-yellow); border-color: var(--accent-yellow); }
-        
-        /* Стильный интерактивный эффект при наведении фишки */
-        .row-capital .value-circle:hover { background-color: rgba(225, 29, 72, 0.1); }
-        .row-reputation .value-circle:hover { background-color: rgba(37, 99, 235, 0.1); }
-        .row-power .value-circle:hover { background-color: rgba(245, 158, 11, 0.1); }
     </style>
 </head>
 <body>
 
     <div class="player-board">
-        <!-- Тот самый штрихованный круг из референса на фоне -->
-        <div class="brand-pattern"></div>
-
         <!-- Место для карточки сектора -->
         <div class="sector-zone">
-            <span>[ место для карточки сектора ]</span>
+            <span>[ МЕСТО ДЛЯ КАРТОЧКИ СЕКТОРА ]</span>
         </div>
 
         <!-- Три шкалы ресурсов -->
@@ -194,7 +147,7 @@
             
             <!-- КАПИТАЛ -->
             <div class="track-row row-capital">
-                <div class="track-label">Капитал</div>
+                <div class="track-label">💵 КАПИТАЛ</div>
                 <div class="track-values">
                     <div class="value-circle">0</div><div class="value-circle">1</div><div class="value-circle">2</div><div class="value-circle">3</div><div class="value-circle">4</div><div class="value-circle">5</div><div class="value-circle">6</div><div class="value-circle">7</div><div class="value-circle">8</div><div class="value-circle">9</div><div class="value-circle">10</div>
                 </div>
@@ -202,7 +155,7 @@
 
             <!-- РЕПУТАЦИЯ -->
             <div class="track-row row-reputation">
-                <div class="track-label">Репутация</div>
+                <div class="track-label">⭐ РЕПУТАЦИЯ</div>
                 <div class="track-values">
                     <div class="value-circle">0</div><div class="value-circle">1</div><div class="value-circle">2</div><div class="value-circle">3</div><div class="value-circle">4</div><div class="value-circle">5</div><div class="value-circle">6</div><div class="value-circle">7</div><div class="value-circle">8</div><div class="value-circle">9</div><div class="value-circle">10</div>
                 </div>
@@ -210,7 +163,7 @@
 
             <!-- МОЩНОСТЬ -->
             <div class="track-row row-power">
-                <div class="track-label">Мощность</div>
+                <div class="track-label">⚡ МОЩНОСТЬ</div>
                 <div class="track-values">
                     <div class="value-circle">0</div><div class="value-circle">1</div><div class="value-circle">2</div><div class="value-circle">3</div><div class="value-circle">4</div><div class="value-circle">5</div><div class="value-circle">6</div><div class="value-circle">7</div><div class="value-circle">8</div><div class="value-circle">9</div><div class="value-circle">10</div>
                 </div>
